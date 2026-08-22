@@ -1,0 +1,198 @@
+/* =====================================================================
+   代码块样式。
+   VitePress 构建期把代码块输出为：
+     <div class="language-{lang} vp-adaptive-theme">
+       <button class="copy" title="Copy Code"></button>
+       <span class="lang">{lang}</span>
+       <pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0">
+         <code>…<span style="--shiki-light:…; --shiki-dark:…">…</span></code>
+       </pre>
+     </div>
+   每个 span 携带 --shiki-light/--shiki-dark 变量，下面用 design-system 双通道
+   在明暗主题间切换。代码块是长读内容，用纯色 surface（不套玻璃）。
+   ===================================================================== */
+
+.vp-doc div[class*='language-'] {
+  position: relative;
+  margin-block: var(--md-sys-spacing-xl);
+  border: 1px solid var(--md-glass-border);
+  border-radius: var(--md-sys-shape-corner-medium);
+  background-color: var(--md-sys-color-surface-container-low);
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.vp-doc div[class*='language-'] pre {
+  margin: 0;
+  padding: var(--md-sys-spacing-lg);
+  background: transparent;
+  overflow-x: auto;
+  font-family: var(--md-ref-typeface-mono);
+  font-size: 0.9em;
+  line-height: 1.7;
+  tab-size: 4;
+}
+
+.vp-doc div[class*='language-'] code {
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* 语言标签：右下角，mono 小字。 */
+.vp-doc div[class*='language-'] .lang {
+  position: absolute;
+  right: var(--md-sys-spacing-md);
+  bottom: var(--md-sys-spacing-sm);
+  z-index: 2;
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-label-small-size);
+  font-weight: var(--md-sys-typescale-label-small-weight);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 70%, transparent);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* 复制按钮：右上角，幽灵小图标按钮（状态层 hover）。 */
+.vp-doc div[class*='language-'] .copy {
+  position: absolute;
+  top: var(--md-sys-spacing-sm);
+  right: var(--md-sys-spacing-sm);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.vp-doc div[class*='language-']:hover .copy,
+.vp-doc div[class*='language-'] .copy:focus-visible {
+  opacity: 1;
+}
+
+.vp-doc div[class*='language-'] .copy:hover {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface-variant) 12%,
+    transparent
+  );
+}
+
+/* 复制图标：mask 画小复制框，随 color 走主题。 */
+.vp-doc div[class*='language-'] .copy::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='14' height='14' x='8' y='8' rx='2' ry='2'/%3E%3Cpath d='M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='14' height='14' x='8' y='8' rx='2' ry='2'/%3E%3Cpath d='M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+}
+
+/* 复制成功：对勾 + primary 色。 */
+.vp-doc div[class*='language-'] .copy.copied {
+  color: var(--md-sys-color-primary);
+}
+
+.vp-doc div[class*='language-'] .copy.copied::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+}
+
+/* ---------- shiki 明暗变量切换（design-system 双通道） ---------- */
+
+:root[data-theme='dark'] .vp-code span {
+  color: var(--shiki-dark, inherit);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .vp-code span {
+    color: var(--shiki-dark, inherit);
+  }
+}
+
+:root[data-theme='light'] .vp-code span {
+  color: var(--shiki-light, inherit);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) .vp-code span {
+    color: var(--shiki-light, inherit);
+  }
+}
+
+/* 行高亮（::: code 语法用） */
+.vp-doc div[class*='language-'] .highlighted {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary-container) 30%,
+    transparent
+  );
+}
+
+/* ---------- 代码组（::: code-group） ---------- */
+
+.vp-doc .vp-code-group {
+  margin-block: var(--md-sys-spacing-xl);
+  border: 1px solid var(--md-glass-border);
+  border-radius: var(--md-sys-shape-corner-medium);
+  background-color: var(--md-sys-color-surface-container-low);
+  overflow: hidden;
+}
+
+.vp-doc .vp-code-group .tabs {
+  display: flex;
+  gap: var(--md-sys-spacing-xs);
+  padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-md);
+  border-bottom: 1px solid var(--md-glass-border);
+  overflow-x: auto;
+}
+
+.vp-doc .vp-code-group .tabs button {
+  border: none;
+  background: transparent;
+  padding: var(--md-sys-spacing-xs) var(--md-sys-spacing-md);
+  border-radius: var(--md-sys-shape-corner-full);
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--md-sys-motion-duration-short2)
+    var(--md-sys-motion-easing-standard);
+}
+
+.vp-doc .vp-code-group .tabs button:hover {
+  background-color: var(--md-sys-color-surface-container-high);
+}
+
+.vp-doc .vp-code-group .tabs button.active {
+  color: var(--md-sys-color-primary);
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 12%,
+    transparent
+  );
+}
+
+.vp-doc .vp-code-group > div[class*='language-'] {
+  margin-block: 0;
+  border: none;
+  border-radius: 0;
+}

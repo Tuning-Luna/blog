@@ -1,0 +1,154 @@
+/* =====================================================================
+   站点级布局：背景层 / 顶栏 / 主内容 / 页脚 / 主题切换追加样式。
+   .site-bg 与 .appbar 的玻璃样式来自 design-system（此处只补站点追加规则）。
+   ===================================================================== */
+
+/* 站点背景图 —— 参数化 token（默认 none）。这里用主题色渐变占位，让玻璃有内容可模糊；
+   部署时可替换为暗色纹理照片：url('/your-photo.png')。 */
+:root {
+  --site-bg-image:
+    radial-gradient(
+      120% 90% at 85% 10%,
+      color-mix(in srgb, var(--md-sys-color-primary-container) 55%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      110% 85% at 12% 95%,
+      color-mix(in srgb, var(--md-sys-color-tertiary-container) 45%, transparent),
+      transparent 55%
+    );
+}
+
+/* 主内容层：浮在 .site-bg（z-index:0）之上。 */
+.site-main {
+  position: relative;
+  z-index: 1;
+  min-height: 60vh;
+}
+
+/* ---------- AppBar 追加样式 ---------- */
+
+/* 品牌头像占位：无照片时用首字母徽标（corner-full 圆形）。 */
+.appbar__avatar--text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary-container) 70%,
+    transparent
+  );
+  color: var(--md-sys-color-on-primary-container);
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  user-select: none;
+}
+
+/* 当前页导航项：primary 文字 + 状态层背景。 */
+.appbar__link.is-active {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 12%,
+    transparent
+  );
+  color: var(--md-sys-color-primary);
+}
+
+.appbar__social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--md-sys-shape-corner-full);
+  color: var(--md-sys-color-on-surface-variant);
+  transition: background-color var(--md-sys-motion-duration-short2)
+    var(--md-sys-motion-easing-standard);
+}
+
+.appbar__social:hover {
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  text-decoration: none;
+}
+
+/* ---------- 页脚 ---------- */
+
+.site-footer {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--md-sys-spacing-4xl);
+  border-top: 1px solid var(--md-glass-border);
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-low) calc(var(--md-glass-opacity) * 100%),
+    transparent
+  );
+  -webkit-backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-sys-spacing-xs);
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--md-sys-spacing-xl);
+  text-align: center;
+}
+
+.site-footer__meta {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+}
+
+@media (min-width: 720px) {
+  .site-footer__inner {
+    flex-direction: row;
+    text-align: left;
+  }
+}
+
+/* ---------- 页面内通用块 ---------- */
+
+/* 文章/文档正文列：读文宽度，居中，长文容器用纯色不套玻璃（AGENT-GUIDE §13）。 */
+.doc-layout {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--md-sys-spacing-3xl);
+}
+
+.doc-layout .container {
+  max-width: 760px;
+}
+
+.doc-layout .vp-doc {
+  min-width: 0;
+}
+
+/* 回到顶部（文章页用），简单幽灵按钮。 */
+.back-to-top {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--md-sys-spacing-xs);
+  margin-top: var(--md-sys-spacing-2xl);
+  padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-lg);
+  border-radius: var(--md-sys-shape-corner-full);
+  color: var(--md-sys-color-primary);
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-label-large-size);
+  transition: background-color var(--md-sys-motion-duration-short2)
+    var(--md-sys-motion-easing-standard);
+}
+
+.back-to-top:hover {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 10%,
+    transparent
+  );
+  text-decoration: none;
+}

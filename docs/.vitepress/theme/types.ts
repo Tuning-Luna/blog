@@ -1,0 +1,14 @@
+/** 内联图标名 —— 与 design-system/components/Icon.tsx 的 IconName 对齐（子集）。 */
+export type IconName =
+  | 'github'
+  | 'external'
+  | 'arrowRight'
+  | 'sun'
+  | 'moon'
+  | 'monitor'
+  | 'star'
+  | 'fork'
+  | 'folder'
+  | 'people'
+  | 'commit'
+  | 'chevronUp'

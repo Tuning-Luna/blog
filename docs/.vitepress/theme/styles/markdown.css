@@ -1,0 +1,283 @@
+/* =====================================================================
+   Markdown 正文排版（.vp-doc）。全部字号/行高/颜色来自 MD3 token：
+   - 标题：Manrope（--md-ref-typeface-display）
+   - 正文：Inter（--md-ref-typeface）
+   - 代码/元信息：Maple Mono（--md-ref-typeface-mono）
+   长文容器使用纯 surface，不套玻璃（可读性与滚动性能，见 AGENT-GUIDE §13）。
+   ===================================================================== */
+
+.vp-doc {
+  color: var(--md-sys-color-on-background);
+  font-family: var(--md-ref-typeface);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+
+/* ---------- 标题 ---------- */
+
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4,
+.vp-doc h5,
+.vp-doc h6 {
+  font-family: var(--md-ref-typeface-display);
+  color: var(--md-sys-color-on-surface);
+  margin-top: var(--md-sys-spacing-2xl);
+  margin-bottom: var(--md-sys-spacing-md);
+  line-height: 1.3;
+  scroll-margin-top: calc(var(--md-sys-spacing-4xl) + var(--md-sys-spacing-xl));
+}
+
+.vp-doc h1 {
+  font-size: var(--md-sys-typescale-display-small-size);
+  line-height: var(--md-sys-typescale-display-small-line-height);
+  margin-top: 0;
+}
+
+.vp-doc h2 {
+  font-size: var(--md-sys-typescale-headline-large-size);
+  line-height: var(--md-sys-typescale-headline-large-line-height);
+  padding-bottom: var(--md-sys-spacing-sm);
+  border-bottom: 1px solid var(--md-glass-border);
+}
+
+.vp-doc h3 {
+  font-size: var(--md-sys-typescale-headline-medium-size);
+  line-height: var(--md-sys-typescale-headline-medium-line-height);
+}
+
+.vp-doc h4 {
+  font-size: var(--md-sys-typescale-headline-small-size);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+}
+
+.vp-doc h5 {
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+}
+
+.vp-doc h6 {
+  font-size: var(--md-sys-typescale-title-medium-size);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+}
+
+/* 标题内链接取消下划线（锚点） */
+.vp-doc h1 a,
+.vp-doc h2 a,
+.vp-doc h3 a,
+.vp-doc h4 a,
+.vp-doc h5 a,
+.vp-doc h6 a {
+  color: inherit;
+}
+
+/* ---------- 段落与间距 ---------- */
+
+.vp-doc p {
+  margin-block: var(--md-sys-spacing-lg);
+}
+
+.vp-doc ul,
+.vp-doc ol {
+  margin-block: var(--md-sys-spacing-lg);
+  padding-inline-start: var(--md-sys-spacing-xl);
+}
+
+.vp-doc li {
+  margin-block: var(--md-sys-spacing-xs);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+}
+
+.vp-doc li > ul,
+.vp-doc li > ol {
+  margin-block: var(--md-sys-spacing-xs);
+}
+
+.vp-doc ul > li::marker {
+  color: var(--md-sys-color-primary);
+}
+
+.vp-doc ol > li::marker {
+  color: var(--md-sys-color-primary);
+  font-family: var(--md-ref-typeface-mono);
+}
+
+/* ---------- 链接 ---------- */
+
+.vp-doc a {
+  color: var(--md-sys-color-primary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--md-sys-color-primary) 40%, transparent);
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--md-sys-motion-duration-short2)
+    var(--md-sys-motion-easing-standard);
+}
+
+.vp-doc a:hover {
+  text-decoration-color: var(--md-sys-color-primary);
+}
+
+/* ---------- 行内代码 ---------- */
+
+.vp-doc code {
+  font-family: var(--md-ref-typeface-mono);
+  font-size: 0.875em;
+  padding: 0.15em 0.4em;
+  border-radius: var(--md-sys-shape-corner-extra-small);
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-high) 80%,
+    transparent
+  );
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-glass-border);
+}
+
+/* 代码块内的 code 覆盖（pre > code 由 code.css 处理） */
+.vp-doc pre code {
+  padding: 0;
+  background: transparent;
+  border: none;
+  font-size: 0.92em;
+}
+
+/* ---------- 引用 ---------- */
+
+.vp-doc blockquote {
+  margin-block: var(--md-sys-spacing-xl);
+  padding: var(--md-sys-spacing-md) var(--md-sys-spacing-xl);
+  border-inline-start: 4px solid var(--md-sys-color-primary);
+  border-radius: 0 var(--md-sys-shape-corner-small) var(--md-sys-shape-corner-small) 0;
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-low) 60%,
+    transparent
+  );
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.vp-doc blockquote p:first-child {
+  margin-top: 0;
+}
+
+.vp-doc blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- 表格 ---------- */
+
+.vp-doc table {
+  width: 100%;
+  margin-block: var(--md-sys-spacing-xl);
+  border-collapse: collapse;
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  overflow-wrap: break-word;
+}
+
+.vp-doc th,
+.vp-doc td {
+  padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-md);
+  border: 1px solid var(--md-glass-border);
+  text-align: start;
+}
+
+.vp-doc th {
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  font-weight: 500;
+}
+
+.vp-doc tr:nth-child(even) td {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-low) 55%,
+    transparent
+  );
+}
+
+/* 窄屏表格横向滚动容器（VitePress 输出 .vp-doc 内的 table 包在 div 里） */
+.vp-doc .table-scroll,
+.vp-doc table {
+  max-width: 100%;
+}
+
+/* ---------- 图片 ---------- */
+
+.vp-doc img {
+  margin-block: var(--md-sys-spacing-xl);
+  border-radius: var(--md-sys-shape-corner-medium);
+  border: 1px solid var(--md-glass-border);
+  max-width: 100%;
+  height: auto;
+}
+
+.vp-doc figure img {
+  margin-bottom: var(--md-sys-spacing-sm);
+}
+
+.vp-doc figcaption {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-small-size);
+  text-align: center;
+  margin-block: var(--md-sys-spacing-xs) var(--md-sys-spacing-xl);
+}
+
+/* ---------- 分隔线 ---------- */
+
+.vp-doc hr {
+  margin-block: var(--md-sys-spacing-2xl);
+  border: none;
+  border-top: 1px solid var(--md-glass-border);
+}
+
+/* ---------- 脚注 ---------- */
+
+.vp-doc .footnotes {
+  margin-top: var(--md-sys-spacing-3xl);
+  padding-top: var(--md-sys-spacing-xl);
+  border-top: 1px solid var(--md-glass-border);
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-small-size);
+}
+
+.vp-doc .footnotes ol {
+  padding-inline-start: var(--md-sys-spacing-lg);
+}
+
+.vp-doc sup a {
+  font-family: var(--md-ref-typeface-mono);
+}
+
+/* ---------- 提示容器（VitePress 的 :::tip 等） ---------- */
+
+.vp-doc .custom-block {
+  margin-block: var(--md-sys-spacing-xl);
+  padding: var(--md-sys-spacing-lg) var(--md-sys-spacing-xl);
+  border-radius: var(--md-sys-shape-corner-medium);
+  border: 1px solid var(--md-glass-border);
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-low) 70%,
+    transparent
+  );
+}
+
+.vp-doc .custom-block .custom-block-title {
+  font-family: var(--md-ref-typeface-mono);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  color: var(--md-sys-color-primary);
+  margin-bottom: var(--md-sys-spacing-sm);
+}
+
+.vp-doc .custom-block p:first-child {
+  margin-top: 0;
+}
+
+.vp-doc .custom-block p:last-child {
+  margin-bottom: 0;
+}

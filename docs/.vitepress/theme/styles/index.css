@@ -1,0 +1,28 @@
+/* =====================================================================
+   Theme 入口样式
+   按 design-system 文档规定的顺序导入（见 AGENT-GUIDE §2 / migration-guide §3）：
+   tokens → base → site-background → utilities → 组件 → 站点层叠样式。
+   ---------------------------------------------------------------------
+   原则：所有颜色/字号/圆角/间距/阴影/时长都来自 --md-* token；
+   主题感知的规则使用 design-system 双通道（data-theme + prefers-color-scheme）；
+   玻璃一律走标准配方（color-mix + backdrop-filter + glass-highlight）。
+   ===================================================================== */
+
+@import '../../../../design-system/theme/tokens.css'; /* 自带 @import colors.css */
+@import '../../../../design-system/theme/base.css';
+@import '../../../../design-system/theme/site-background.css';
+@import '../../../../design-system/theme/utilities.css';
+
+/* design-system 组件样式：CSS 直接复用，Vue 组件按 DOM 契约重写结构 */
+@import '../../../../design-system/components/Button.css';
+@import '../../../../design-system/components/Card.css';
+@import '../../../../design-system/components/Chip.css';
+@import '../../../../design-system/components/IconButton.css';
+@import '../../../../design-system/components/Section.css';
+@import '../../../../design-system/components/Stat.css';
+@import '../../../../design-system/components/AppBar.css';
+
+/* 站点层叠样式 */
+@import './layout.css';
+@import './markdown.css';
+@import './code.css';
