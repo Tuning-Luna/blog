@@ -4,6 +4,7 @@ import { useData, useRoute } from 'vitepress'
 import LocalSearch from './LocalSearch.vue'
 import M3Icon from './M3Icon.vue'
 import ThemeToggle from './ThemeToggle.vue'
+import { profile } from '../../data/profile'
 
 const { site } = useData()
 const route = useRoute()
@@ -18,7 +19,8 @@ const isActive = (link: string): boolean => {
   return path.startsWith(link.replace(/\/$/, ''))
 }
 
-const githubUrl = computed(() => site.value.themeConfig.siteMeta?.github ?? '#')
+// 顶栏 GitHub 图标指向本站源码仓库
+const githubUrl = computed(() => profile.siteGithubUrl)
 </script>
 
 <template>

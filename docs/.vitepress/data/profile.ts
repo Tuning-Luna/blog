@@ -6,7 +6,7 @@ export const profile = {
   name: 'Tuning-Luna',
   /** 个人主页（Tuning-Luna.github.io） */
   siteUrl: 'https://tuning-luna.github.io/',
-  siteGithubUrl:'https://github.com/Tuning-Luna/blog',
+  siteGithubUrl: 'https://github.com/Tuning-Luna/blog',
   githubUrl: 'https://github.com/Tuning-Luna',
   gmailUrl: 'mailto:tuningluna1206@gmail.com',
   discordUrl: 'https://discord.com/users/1220524033955729428',
@@ -17,5 +17,3 @@ export const profile = {
   /** GitHub profile bio. */
   bio: "You Read My Bio. That's Enough Social Interaction For One Day.",
 } as const
-
-export const siteRepoUrl = 'https://github.com/Tuning-Luna/tuningluna-blog'
