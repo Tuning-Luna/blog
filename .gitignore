@@ -1,6 +1,10 @@
 # Dependencies
 node_modules/
 
+# design-system：参考实现，不随本仓库提交
+# （所需 CSS 已复制进 docs/.vitepress/theme/vendor/）
+design-system/
+
 # Build output
 dist/
 docs/.vitepress/dist/

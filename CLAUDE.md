@@ -37,9 +37,10 @@ TuningLuna 的个人博客。基于 **VitePress** 的纯静态站点：本地写
 │           ├── env.d.ts       # @localSearchIndex 虚拟模块类型声明
 │           ├── components/    # M3 组件（Vue 重写）+ BlogList/PostLayout/LocalSearch 等
 │           ├── composables/   # useTheme（三态主题）/ useScrollReveal
-│           ├── styles/        # index.css 按顺序导入 design-system + 站点层叠样式
+│           ├── vendor/        # ★ 从 design-system 复制的 CSS（自包含，见 vendor/README.md）
+│           ├── styles/        # index.css 按顺序导入 vendor CSS + 站点层叠样式
 │           └── utils/format.ts
-├── design-system/             # ★ 设计系统资源包（只读，禁止随意修改）
+├── design-system/             # ★ 参考实现（已 gitignore，不随仓库提交）
 ├── .github/workflows/deploy.yml
 └── package.json / tsconfig.json
 ```
@@ -55,7 +56,11 @@ npm run typecheck  # vue-tsc 类型检查
 
 ## design-system 使用规则（硬性约束）
 
-> 完整规则见 `design-system/AGENT-GUIDE.md`。**先读它再写任何样式。** 以下是最易踩的雷：
+> `design-system/` 是**参考实现**，已 gitignore、不随本仓库提交；主题实际消费的是
+> `docs/.vitepress/theme/vendor/` 里的 CSS 副本（自包含，可独立构建部署）。
+> 完整规则见 `design-system/AGENT-GUIDE.md`（参考上层目录）。**先读它再写任何样式。**
+> 需要更新 vendor CSS 时：从 design-system 复制同名文件覆盖（见 vendor/README.md），
+> 改动前说明原因、最小范围、改后验证。以下是最易踩的雷：
 
 1. **一切皆 token。** 颜色/字号/圆角/间距/阴影/时长全部写 `var(--md-*)`，NEVER 硬编码 hex/rgba 字面量（唯一例外：`design-system/theme/tokens.css` 内的高光与滚动条 token 定义处）。
 2. **颜色是角色不是值。** 用 `--md-sys-color-primary` 表达语义，不关心具体 hex。换种子色后全站自动换肤。
@@ -77,8 +82,8 @@ npm run typecheck  # vue-tsc 类型检查
 6. **字体。** Manrope(display)/Inter(body)/Maple Mono(mono)，CDN 加载，NEVER 引入 Google Fonts。
 7. **无障碍。** 图标按钮必带 `aria-label`；`:focus-visible` 焦点环全局已有，别删。
 8. **动效。** 只消费 MD3 motion token；所有动画必须有 `prefers-reduced-motion` 分支（base.css 有全局折叠，新增动画仍应自补）。
-9. **M3 组件**是 Vue 重写的（`design-system/components/*.css` 直接复用，DOM 结构按 `docs/components.md` 契约）。改组件样式改 CSS；新增组件 `m3-` 前缀 + BEM + 只消费 token。
-10. **适配优先。** 需要新样式时先看 design-system 是否已有；修改 design-system 前必须说明原因、最小改动、验证不破坏其他页面。
+9. **M3 组件**是 Vue 重写的（`theme/vendor/components/*.css` 复用，DOM 结构按设计系统契约）。改组件样式改 CSS；新增组件 `m3-` 前缀 + BEM + 只消费 token。
+10. **适配优先。** 需要新样式时先看 design-system / vendor 是否已有；改动前必须说明原因、最小改动、验证不破坏其他页面。
 
 ## 主题架构要点
 
@@ -143,4 +148,4 @@ npm run typecheck  # vue-tsc 类型检查
 - 每完成一个阶段跑 `npm run build` + `npm run typecheck`；能测就测。
 - 不引入不必要依赖：VitePress / Vue / TS / design-system 能解决的不装库。
 - 个人资料（简介/项目/社交/技能）不要编造，用「TODO 占位」标注，由仓库主人补充。
-- 不破坏 `design-system/`：改动前说明原因，最小范围，改后验证。
+- 不破坏 `theme/vendor/`（design-system 的副本）：改动前说明原因，最小范围，改后验证。
