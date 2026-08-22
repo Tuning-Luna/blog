@@ -66,6 +66,6 @@ function handleSpotlight(e: MouseEvent) {
     </section>
 
     <!-- 联系 -->
-    <ContactSection />
+    <!-- <ContactSection /> -->
   </main>
 </template>
