@@ -11,4 +11,6 @@ export type IconName =
   | 'folder'
   | 'people'
   | 'commit'
+  | 'clock'
+  | 'calendar'
   | 'chevronUp'

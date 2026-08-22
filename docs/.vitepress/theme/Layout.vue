@@ -6,13 +6,18 @@ import PostLayout from './components/PostLayout.vue'
 import SiteFooter from './components/SiteFooter.vue'
 import SiteHeader from './components/SiteHeader.vue'
 
-const { frontmatter } = useData()
+const { frontmatter, page } = useData()
 
-// 页面布局由 frontmatter.layout 决定：
-//   home → 个人主页（HomeLayout）
-//   post → 文章页（PostLayout，含元信息 + TOC + 前后篇）
-//   其他 → 通用文档页
-const layout = computed(() => frontmatter.value.layout ?? 'doc')
+// 页面布局优先级：
+//   1. frontmatter.layout 显式指定（home → 个人主页；post → 文章页）
+//   2. 自动识别博客文章路径（blog/posts/*.md）→ 文章页（无需写 layout: post）
+//   3. 其余 → 通用文档页
+const layout = computed(() => {
+  const fm = frontmatter.value.layout
+  if (fm) return fm
+  if (page.value.relativePath.startsWith('blog/posts/')) return 'post'
+  return 'doc'
+})
 </script>
 
 <template>

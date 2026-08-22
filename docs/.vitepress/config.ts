@@ -88,6 +88,8 @@ export default defineConfigWithTheme<BlogThemeConfig>({
   ],
 
   markdown: {
+    // 开启标题提取（供自定义主题的 TOC 使用）；自定义主题下 VitePress 默认不启用。
+    headers: true,
     theme: {
       light: 'github-light',
       dark: 'github-dark',
