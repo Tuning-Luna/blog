@@ -43,7 +43,7 @@ function handleSpotlight(e: MouseEvent) {
           <div class="home-hero__actions">
             <M3Button href="/blog/">查看博客</M3Button>
             <M3Button :href="profile.siteUrl" variant="text">个人主页</M3Button>
-            <M3Button :href="profile.siteGithubUrl" variant="text">GitHub</M3Button>
+            <M3Button :href="profile.githubUrl" variant="text">GitHub</M3Button>
           </div>
         </div>
       </div>

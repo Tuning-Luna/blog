@@ -27,8 +27,8 @@ const SITE = {
   title: 'TuningLuna Blog',
   description: 'TuningLuna 的个人博客 — 前端、开源与 AI Agent 随笔',
   author: 'TuningLuna',
-  github: 'https://github.com/Tuning-Luna', // 占位符：请确认你的 GitHub 主页
-  url: 'https://tuning-luna.github.io/tuningluna-blog', // 占位符：部署后的真实 URL
+  github: 'https://github.com/Tuning-Luna',
+  url: 'https://github.com/Tuning-Luna/blog', 
 }
 
 /** 从环境变量解析 base：本地为 /，CI 注入 /<repo>/；用户页（<user>.github.io）回退 /。 */
