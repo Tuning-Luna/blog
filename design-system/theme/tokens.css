@@ -1,0 +1,174 @@
+/* Material Design 3 design tokens for this site.
+   Color tokens live in ./colors.css (generated from a seed by scripts/gen-theme.mjs).
+   The tokens below are the static M3 spec values (type scale, shape, elevation,
+   spacing, motion) plus site-level derived tokens (glassmorphism, scrollbar).
+   They are defined as CSS custom properties so every component consumes them —
+   no hard-coded dimensions or colors in component styles. */
+
+@import './colors.css';
+
+:root {
+  /* --- Typography (M3 type scale). Three role-specific families, all loaded
+     in index.html: Manrope for display/headlines, Inter for body/UI, and Maple
+     Mono NF CN for mono accents (tech chips, stat numbers, section labels).
+     CJK text falls through to the platform system fonts (PingFang SC on macOS,
+     Microsoft YaHei on Windows, Noto Sans SC on Linux/Android) — the mainstream,
+     zero-download choice for Chinese–English mixed sites. --- */
+  --md-ref-typeface: 'Inter', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei',
+    system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --md-ref-typeface-display: 'Manrope', 'Inter', 'Noto Sans SC', 'PingFang SC',
+    'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  --md-ref-typeface-mono: 'Maple Mono NF CN', ui-monospace, 'Cascadia Code',
+    'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace;
+
+  --md-sys-typescale-display-small-size: 36px;
+  --md-sys-typescale-display-small-weight: 400;
+  --md-sys-typescale-display-small-line-height: 44px;
+  --md-sys-typescale-display-small-tracking: 0;
+
+  --md-sys-typescale-headline-large-size: 32px;
+  --md-sys-typescale-headline-large-weight: 400;
+  --md-sys-typescale-headline-large-line-height: 40px;
+  --md-sys-typescale-headline-large-tracking: 0;
+
+  --md-sys-typescale-headline-medium-size: 28px;
+  --md-sys-typescale-headline-medium-weight: 400;
+  --md-sys-typescale-headline-medium-line-height: 36px;
+  --md-sys-typescale-headline-medium-tracking: 0;
+
+  --md-sys-typescale-headline-small-size: 24px;
+  --md-sys-typescale-headline-small-weight: 400;
+  --md-sys-typescale-headline-small-line-height: 32px;
+  --md-sys-typescale-headline-small-tracking: 0;
+
+  --md-sys-typescale-title-large-size: 22px;
+  --md-sys-typescale-title-large-weight: 400;
+  --md-sys-typescale-title-large-line-height: 28px;
+  --md-sys-typescale-title-large-tracking: 0;
+
+  --md-sys-typescale-title-medium-size: 16px;
+  --md-sys-typescale-title-medium-weight: 500;
+  --md-sys-typescale-title-medium-line-height: 24px;
+  --md-sys-typescale-title-medium-tracking: 0.15px;
+
+  --md-sys-typescale-title-small-size: 14px;
+  --md-sys-typescale-title-small-weight: 500;
+  --md-sys-typescale-title-small-line-height: 20px;
+  --md-sys-typescale-title-small-tracking: 0.1px;
+
+  --md-sys-typescale-body-large-size: 16px;
+  --md-sys-typescale-body-large-weight: 400;
+  --md-sys-typescale-body-large-line-height: 24px;
+  --md-sys-typescale-body-large-tracking: 0.5px;
+
+  --md-sys-typescale-body-medium-size: 14px;
+  --md-sys-typescale-body-medium-weight: 400;
+  --md-sys-typescale-body-medium-line-height: 20px;
+  --md-sys-typescale-body-medium-tracking: 0.25px;
+
+  --md-sys-typescale-body-small-size: 12px;
+  --md-sys-typescale-body-small-weight: 400;
+  --md-sys-typescale-body-small-line-height: 16px;
+  --md-sys-typescale-body-small-tracking: 0.4px;
+
+  --md-sys-typescale-label-large-size: 14px;
+  --md-sys-typescale-label-large-weight: 500;
+  --md-sys-typescale-label-large-line-height: 20px;
+  --md-sys-typescale-label-large-tracking: 0.1px;
+
+  --md-sys-typescale-label-medium-size: 12px;
+  --md-sys-typescale-label-medium-weight: 500;
+  --md-sys-typescale-label-medium-line-height: 16px;
+  --md-sys-typescale-label-medium-tracking: 0.5px;
+
+  --md-sys-typescale-label-small-size: 11px;
+  --md-sys-typescale-label-small-weight: 500;
+  --md-sys-typescale-label-small-line-height: 16px;
+  --md-sys-typescale-label-small-tracking: 0.5px;
+
+  /* --- Shape (M3 corner scale) --- */
+  --md-sys-shape-corner-none: 0px;
+  --md-sys-shape-corner-extra-small: 4px;
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-extra-large: 28px;
+  --md-sys-shape-corner-full: 9999px;
+
+  /* --- Elevation (M3 shadow levels) --- */
+  --md-sys-elevation-level0: 0 0 0 0 transparent;
+  --md-sys-elevation-level1: 0 1px 2px rgb(0 0 0 / 30%), 0 1px 3px 1px rgb(0 0 0 / 15%);
+  --md-sys-elevation-level2: 0 1px 2px rgb(0 0 0 / 30%), 0 2px 6px 2px rgb(0 0 0 / 15%);
+  --md-sys-elevation-level3: 0 1px 3px rgb(0 0 0 / 30%), 0 4px 8px 3px rgb(0 0 0 / 15%);
+  --md-sys-elevation-level4: 0 2px 3px rgb(0 0 0 / 30%), 0 6px 10px 4px rgb(0 0 0 / 15%);
+  --md-sys-elevation-level5: 0 4px 4px rgb(0 0 0 / 30%), 0 8px 12px 6px rgb(0 0 0 / 15%);
+
+  /* --- Spacing (M3 4dp grid) --- */
+  --md-sys-spacing-xs: 4px;
+  --md-sys-spacing-sm: 8px;
+  --md-sys-spacing-md: 12px;
+  --md-sys-spacing-lg: 16px;
+  --md-sys-spacing-xl: 24px;
+  --md-sys-spacing-2xl: 32px;
+  --md-sys-spacing-3xl: 48px;
+  --md-sys-spacing-4xl: 64px;
+  --md-sys-spacing-5xl: 96px;
+
+  /* --- Motion (M3 durations & easing) --- */
+  --md-sys-motion-duration-short1: 100ms;
+  --md-sys-motion-duration-short2: 200ms;
+  --md-sys-motion-duration-short3: 300ms;
+  --md-sys-motion-duration-short4: 400ms;
+  --md-sys-motion-duration-medium1: 500ms;
+  --md-sys-motion-duration-medium2: 700ms;
+  --md-sys-motion-duration-long1: 1000ms;
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+
+  /* --- Glassmorphism (frosted-glass surfaces) ---
+     Surfaces are the MD3 colour roles mixed with transparency, blurred and
+     boosted with `saturate()` via backdrop-filter. Opacity is theme-aware:
+     lighter in dark mode so the vivid background image shows through. */
+  --md-glass-blur: 20px;
+  --md-glass-saturate: 150%;
+  /* Light mode needs a lower opacity so the background image still shows
+     through the frosted surfaces — otherwise the glass is invisible on the
+     washed-out light background. */
+  --md-glass-opacity-light: 0.6;
+  --md-glass-opacity-dark: 0.6;
+  --md-glass-opacity: var(--md-glass-opacity-light);
+  /* Subtle edge for frosted surfaces (M3 outline-variant at low alpha). */
+  --md-glass-border: color-mix(in srgb, var(--md-sys-color-outline-variant) 32%, transparent);
+  /* Bright top edge that makes a translucent surface read as "glass". */
+  --md-glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  /* --- Scrollbar (derived from the Material Scrollbar) ---
+     MD3 publishes no web scrollbar component or CSS spec. These values follow
+     Flutter's Material Scrollbar, Google's official Material implementation
+     (flutter/flutter, packages/flutter/lib/src/material/scrollbar.dart): the
+     thumb is ColorScheme.onSurface at a theme-aware opacity that rises on hover
+     and drag, over a transparent track.
+       light: idle .1 · hover .5 · dragged .6
+       dark:  idle .3 · hover .65 · dragged .75   */
+  --md-scrollbar-thumb: color-mix(in srgb, var(--md-sys-color-on-surface) 10%, transparent);
+  --md-scrollbar-thumb-hover: color-mix(in srgb, var(--md-sys-color-on-surface) 50%, transparent);
+  /* "active" here is the CSS :active state, i.e. Flutter's "dragged" color. */
+  --md-scrollbar-thumb-active: color-mix(in srgb, var(--md-sys-color-on-surface) 60%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --md-glass-opacity: var(--md-glass-opacity-dark);
+    --md-scrollbar-thumb: color-mix(in srgb, var(--md-sys-color-on-surface) 30%, transparent);
+    --md-scrollbar-thumb-hover: color-mix(in srgb, var(--md-sys-color-on-surface) 65%, transparent);
+    --md-scrollbar-thumb-active: color-mix(in srgb, var(--md-sys-color-on-surface) 75%, transparent);
+  }
+}
+
+:root[data-theme='dark'] {
+  --md-glass-opacity: var(--md-glass-opacity-dark);
+  --md-scrollbar-thumb: color-mix(in srgb, var(--md-sys-color-on-surface) 30%, transparent);
+  --md-scrollbar-thumb-hover: color-mix(in srgb, var(--md-sys-color-on-surface) 65%, transparent);
+  --md-scrollbar-thumb-active: color-mix(in srgb, var(--md-sys-color-on-surface) 75%, transparent);
+}

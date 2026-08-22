@@ -1,0 +1,25 @@
+/* OPTIONAL convenience layer — NOT part of the source project's stylesheets.
+   The source project deliberately repeats the glass declarations inline in each
+   component (AppBar.css, Card.css, its layout rails, contact cards, project
+   rows) so every surface picks its own M3 surface role. This file packages the
+   three declarations every one of those surfaces shares into one utility class,
+   so simple cases don't need the copy-paste. For anything finer-grained (a
+   different surface role, hover state layers, etc.) use the canonical recipe
+   from AGENT-GUIDE.md instead of extending this class.
+
+   .m3-glass applies the source's most common variant: surface-container-low at
+   --md-glass-opacity. The app-bar variant swaps the role to surface-container.
+   Border-radius, box-shadow and content are NOT included — set them per
+   component (e.g. border-radius: var(--md-sys-shape-corner-large);
+   box-shadow: var(--md-sys-elevation-level1), var(--md-glass-highlight)). */
+
+.m3-glass {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-low) calc(var(--md-glass-opacity) * 100%),
+    transparent
+  );
+  -webkit-backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  border: 1px solid var(--md-glass-border);
+}

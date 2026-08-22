@@ -1,0 +1,90 @@
+/* M3 slider: a styled native range input — 20px hit area with a 4px visual
+   track drawn by pseudo-elements, and a primary-color handle that grows while
+   hovered, focused or dragged (MD3 slider handles respond to interaction). */
+
+.m3-slider {
+  flex: 1;
+  min-width: 0;
+  height: 20px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Chromium: filled portion drawn as a gradient up to --range-progress. */
+.m3-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: linear-gradient(
+    to right,
+    var(--md-sys-color-primary) 0 var(--range-progress, 0%),
+    var(--md-sys-color-surface-container-highest) var(--range-progress, 0%) 100%
+  );
+}
+
+/* Firefox has a native progress pseudo-element for the filled portion. */
+.m3-slider::-moz-range-track {
+  height: 4px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+.m3-slider::-moz-range-progress {
+  height: 4px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-primary);
+}
+
+.m3-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  /* (4px track − 12px thumb) / 2 keeps the thumb centered on the track. */
+  width: 12px;
+  height: 12px;
+  margin-top: -4px;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--md-sys-color-primary);
+  transition: transform var(--md-sys-motion-duration-short1) var(--md-sys-motion-easing-standard);
+}
+
+.m3-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--md-sys-color-primary);
+  transition: transform var(--md-sys-motion-duration-short1) var(--md-sys-motion-easing-standard);
+}
+
+.m3-slider:hover::-webkit-slider-thumb,
+.m3-slider:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
+
+.m3-slider:hover::-moz-range-thumb,
+.m3-slider:focus-visible::-moz-range-thumb {
+  transform: scale(1.2);
+}
+
+/* Active handle grows further while being dragged (MD3 interaction state). */
+.m3-slider:active::-webkit-slider-thumb {
+  transform: scale(1.4);
+}
+
+.m3-slider:active::-moz-range-thumb {
+  transform: scale(1.4);
+}
+
+/* Dimmed until the track's metadata has loaded and seeking is possible. */
+.m3-slider:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
+.m3-slider:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+  border-radius: var(--md-sys-shape-corner-full);
+}

@@ -1,0 +1,55 @@
+/* Fixed site background: a blurred image with a theme-tinted mask, fixed behind
+   all content. Split from the source project's global.css; the ONLY change from
+   the source is that the image URL is parameterized (--site-bg-image) instead of
+   pointing at the source project's personal photo (was:
+   url('../assets/JSA-279k.png')). The source project sets:
+     --site-bg-image: url('../assets/JSA-279k.png');
+   Choose a dark, textured image — light images wash out both themes.
+
+   This layer is what gives the frosted-glass surfaces something colourful to
+   blur; without it the glassmorphism has no visible effect. Content sits above
+   it via the z-index rules in layout-split.css (.layout / .appbar). */
+
+:root {
+  --site-bg-image: none; /* e.g. url('/assets/site-bg.png') */
+}
+
+.site-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.site-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--site-bg-image);
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px);
+  /* Slightly larger than the viewport so the blurred edges stay hidden. */
+  transform: scale(1.05);
+}
+
+.site-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Lighter mask in light mode so the dark image still shows through and the
+     frosted surfaces have something colourful to blur. */
+  background-color: color-mix(in srgb, var(--md-sys-color-background) 68%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .site-bg::after {
+    /* The image is dark, so it can show through more in dark mode. */
+    background-color: color-mix(in srgb, var(--md-sys-color-background) 60%, transparent);
+  }
+}
+
+:root[data-theme='dark'] .site-bg::after {
+  background-color: color-mix(in srgb, var(--md-sys-color-background) 60%, transparent);
+}

@@ -1,0 +1,246 @@
+/* Symmetric split layout — the source project's page scaffold, split verbatim
+   from its global.css (no rule/value changes).
+
+   Above 1200px: two 360px sticky frosted-glass rails flanking a scrolling
+   content column; below 1200px it collapses to a single column where the rails
+   lose their glass panel entirely. This file is an OPTIONAL reference pattern —
+   a new project can adopt it wholesale or write its own layout and keep only
+   the glass recipe.
+
+   NOTE (source coupling, kept for fidelity): some rules target a `.hero` child
+   class owned by the source project's Hero section (entrance animation,
+   compaction, background tint). They are inert when no `.hero` element exists.
+   The rails' cursor halo uses their own ::before (not the `.spotlight` class
+   from utilities.css) because adding `.spotlight` would set position: relative
+   and break position: sticky. */
+
+/* Content layer above the fixed background (.site-bg, z-index 0). */
+.layout {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Symmetric split layout: fixed personal rails on both sides, scrolling
+   content in the middle. Above 1200px the Hero card is sticky on the left and
+   the PageViews / NowPlaying / MiniPlayer card is sticky on the right (mirrored,
+   both ~24px from their viewport edge); below it the page falls back to a single
+   column with those sections at the top. The background (`.site-bg`) is a fixed
+   full-viewport layer and is untouched. --- */
+
+.layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--md-sys-spacing-xl);
+  width: 100%;
+  padding-inline: var(--md-sys-spacing-xl);
+}
+
+/* The middle column is the sizing context for the responsive grids (container
+   queries), so they adapt to the column width instead of the viewport. */
+.layout__content {
+  flex: 1;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+/* Both sticky rails share the same geometry so the page is left/right
+   symmetric: 360px wide (the Spotify embed is ~328px and needs ~320px minimum),
+   pinned just below the app bar, frosted-glass surface. They are content-sized
+   (`height: auto`), so they hug their content and can never show an internal
+   scrollbar on short viewports. */
+.layout__hero,
+.layout__widgets {
+  flex: 0 0 360px;
+  position: sticky;
+  top: calc(var(--md-sys-spacing-4xl) + var(--md-sys-spacing-xs));
+  padding: var(--md-sys-spacing-lg);
+  display: flex;
+  flex-direction: column;
+  justify-content: safe center;
+  /* Floating frosted-glass panel over the fixed background. */
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-low) calc(var(--md-glass-opacity) * 100%),
+    transparent
+  );
+  -webkit-backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  border: 1px solid var(--md-glass-border);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  box-shadow: var(--md-sys-elevation-level1), var(--md-glass-highlight);
+}
+
+/* Cursor halo on both personal cards. The asides are already `position: sticky`
+   (positioned elements), so they get their own ::before instead of the
+   `.spotlight` class — adding that class would set `position: relative` and
+   override sticky. */
+.layout__hero::before,
+.layout__widgets::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    240px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent),
+    color-mix(in srgb, var(--md-sys-color-primary) 4%, transparent) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.layout__hero:hover::before,
+.layout__widgets:hover::before {
+  opacity: 1;
+}
+
+/* Entrance animation runs on the hero *content*, not on the sticky aside —
+   a transform animation on a `position: sticky` element breaks its stickiness
+   in Chromium, making the sidebar scroll out of view. */
+.layout__hero .hero {
+  animation: hero-in var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized-decelerate)
+    both;
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layout__hero .hero {
+    animation: none;
+  }
+}
+
+/* Compact the hero inside the sidebar; the aside owns the gutter. Tighter
+   spacing keeps the whole stack (embed + avatar + text + actions) from
+   overflowing the fixed panel on shorter screens. */
+.layout__hero .hero {
+  /* Keep the hero content above the cursor halo. */
+  position: relative;
+  z-index: 1;
+  padding-block: var(--md-sys-spacing-sm);
+  background: none;
+}
+
+.layout__hero .hero__avatar {
+  margin-bottom: var(--md-sys-spacing-md);
+}
+
+.layout__hero .container,
+.layout__widgets .container {
+  max-width: none;
+  padding-inline: 0;
+}
+
+/* Compact the PageViews / NowPlaying sections inside the widgets card, and
+   flatten the MiniPlayer's own glass surface so it reads as card content.
+   Scoped to the split layout only (complements the `max-width: 1200px` fallback
+   below, so the single column keeps the widgets' normal section styling). */
+@media (min-width: 1201px) {
+  .layout__widgets {
+    padding: var(--md-sys-spacing-md);
+  }
+
+  .layout__widgets .m3-section {
+    padding-block: var(--md-sys-spacing-xs);
+  }
+
+  .layout__widgets .m3-section__header {
+    margin-bottom: var(--md-sys-spacing-xs);
+  }
+
+  /* No descriptive subtitles in the compact card — eyebrow + title is enough
+     here (they return in the single-column sections). */
+  .layout__widgets .m3-section__subtitle {
+    display: none;
+  }
+
+  /* headline-medium is too large for the 360px rail; drop to title-large. */
+  .layout__widgets .m3-section__title {
+    font-size: var(--md-sys-typescale-title-large-size);
+    line-height: var(--md-sys-typescale-title-large-line-height);
+  }
+
+  .layout__widgets .mini-player {
+    margin-top: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (max-width: 1200px) {
+  .layout {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  /* Single-column order: Hero, the widgets, then the scrolling content. */
+  .layout__hero {
+    order: 1;
+  }
+
+  .layout__widgets {
+    order: 2;
+  }
+
+  .layout__content {
+    order: 3;
+  }
+
+  /* Drop the sticky cards; Hero and the widgets become plain sections. */
+  .layout__hero,
+  .layout__widgets {
+    position: static;
+    flex-basis: auto;
+    height: auto;
+    width: 100%;
+    padding: 0;
+    overflow: visible;
+    justify-content: flex-start;
+    /* Drop the glass panel on single-column layouts; each section is a plain
+       block again. */
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* Disable the cursor halo on single-column layouts (no fixed panel). */
+  .layout__hero::before,
+  .layout__widgets::before {
+    display: none;
+  }
+
+  /* Restore the hero's own padding and tint once it scrolls in the single column. */
+  .layout__hero .hero {
+    padding-block: var(--md-sys-spacing-5xl) var(--md-sys-spacing-4xl);
+    background: radial-gradient(
+      80% 60% at 50% 0%,
+      color-mix(in srgb, var(--md-sys-color-primary-container) 28%, transparent),
+      transparent 70%
+    );
+  }
+
+  .layout__hero .container,
+  .layout__widgets .container {
+    max-width: 1024px;
+    padding-inline: var(--md-sys-spacing-xl);
+  }
+}

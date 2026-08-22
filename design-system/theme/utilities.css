@@ -1,0 +1,83 @@
+/* Generic utilities — container, a11y helper, glass surface and spotlight.
+   Kept in sync with the source project's src/theme/utilities.css. */
+
+/* --- Layout utilities --- */
+
+.container {
+  width: 100%;
+  max-width: 1024px;
+  margin-inline: auto;
+  padding-inline: var(--md-sys-spacing-xl);
+}
+
+@media (min-width: 720px) {
+  .container {
+    padding-inline: var(--md-sys-spacing-2xl);
+  }
+}
+
+/* Visually hide text while keeping it readable to screen readers. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Frosted-glass card surface (uses the --md-glass-* tokens) ---
+   Card-specific padding/gap/display stay in the component's own CSS; this is
+   only the shared surface recipe so it lives in exactly one place. Compared to
+   glass.css's optional .m3-glass it also fixes the card radius (large); it
+   still leaves box-shadow per component. */
+
+.glass-card {
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-low) calc(var(--md-glass-opacity) * 100%),
+    transparent
+  );
+  -webkit-backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  border: 1px solid var(--md-glass-border);
+  border-radius: var(--md-sys-shape-corner-large);
+}
+
+/* --- Cursor spotlight: a faint light halo that follows the mouse over a
+   "personal" card (hero panel, contact cards, music player). Position is set
+   by JS via --spot-x / --spot-y (see hooks/useSpotlight.ts). --- */
+
+.spotlight {
+  position: relative;
+}
+
+.spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    240px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent),
+    color-mix(in srgb, var(--md-sys-color-primary) 4%, transparent) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+/* Keep card content above the halo. */
+.spotlight > * {
+  position: relative;
+  z-index: 1;
+}

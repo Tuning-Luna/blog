@@ -1,0 +1,19 @@
+/* M3 assist chip. */
+
+.m3-chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--md-ref-typeface-mono);
+  gap: var(--md-sys-spacing-sm);
+  height: 32px;
+  padding-inline: var(--md-sys-spacing-lg);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  white-space: nowrap;
+}

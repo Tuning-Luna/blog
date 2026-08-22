@@ -1,0 +1,28 @@
+/* M3 stat: large value over a small label. */
+
+.m3-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--md-sys-spacing-xs);
+  text-align: center;
+}
+
+.m3-stat__icon {
+  color: var(--md-sys-color-primary);
+}
+
+.m3-stat__value {
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-headline-small-size);
+  font-weight: var(--md-sys-typescale-headline-small-weight);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+  color: var(--md-sys-color-on-surface);
+  font-variant-numeric: tabular-nums;
+}
+
+.m3-stat__label {
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  color: var(--md-sys-color-on-surface-variant);
+}

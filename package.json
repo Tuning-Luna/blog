@@ -1,0 +1,22 @@
+{
+  "name": "tuningluna-blog",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "TuningLuna's personal blog — VitePress + MD3 × Glassmorphism design system",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.41",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.3.11"
+  },
+  "allowScripts": {
+    "esbuild@0.21.5": true
+  }
+}

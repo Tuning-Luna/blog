@@ -1,0 +1,130 @@
+/* Base layer — reset, root typography, focus/selection, reduced-motion and the
+   Material scrollbar. Split verbatim from the source project's global.css; every
+   rule and value is unchanged. Depends only on tokens.css. */
+
+:root {
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Keep anchored section headings clear of the sticky app bar. */
+  scroll-padding-top: calc(var(--md-sys-spacing-4xl) + var(--md-sys-spacing-2xl));
+}
+
+body {
+  font-family: var(--md-ref-typeface);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  background-color: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition:
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--md-sys-color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+::selection {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+  border-radius: var(--md-sys-shape-corner-extra-small);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- Scrollbar (Material scrollbar) ---
+   MD3 has no web scrollbar spec, so the geometry and colors come from Flutter's
+   Material Scrollbar (see the --md-scrollbar-* tokens in tokens.css): a 4px
+   thumb (Flutter's mobile/Android thickness) with rounded corners over a
+   transparent track.
+
+   The two styling mechanisms are deliberately scoped apart. MDN documents that
+   when `scrollbar-color`/`scrollbar-width` are supported and not `auto`, they
+   *override* any ::-webkit-scrollbar-* styling — so setting both globally would
+   silently drop the width/radius in Chrome 121+ and Safari 26.2+. Hence:
+   standard properties only where WebKit pseudo-elements don't exist (Firefox),
+   and the pseudo-elements everywhere else. `scrollbar-width: thin` is a
+   platform-defined "thin" variant, so Firefox can't be made pixel-exact. */
+
+@supports (scrollbar-color: auto) and (not (selector(::-webkit-scrollbar))) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--md-scrollbar-thumb) transparent;
+  }
+}
+
+@supports selector(::-webkit-scrollbar) {
+  *::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--md-scrollbar-thumb);
+    /* Radius.circular(8) — Flutter's web thumb radius, i.e. M3 corner-small. */
+    border-radius: var(--md-sys-shape-corner-small);
+  }
+
+  /* Chromium-only pseudo-class variants of the thumb's hover/dragged states. */
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--md-scrollbar-thumb-hover);
+  }
+
+  *::-webkit-scrollbar-thumb:active {
+    background: var(--md-scrollbar-thumb-active);
+  }
+}

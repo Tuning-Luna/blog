@@ -1,0 +1,108 @@
+/* M3 top app bar. On desktop: brand | centered nav | toggles.
+   On narrow screens the nav drops to a full-width, horizontally scrollable row.
+   CSS-only extract: the source project's AppBar.tsx is business-coupled (nav
+   items, i18n, profile data), so only the stylesheet ships here — the expected
+   DOM contract is documented in docs/components.md. */
+
+.appbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  /* Frosted-glass app bar over the scrolling content. */
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container) calc(var(--md-glass-opacity) * 100%),
+    transparent
+  );
+  -webkit-backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  border-bottom: 1px solid var(--md-glass-border);
+}
+
+.appbar__inner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--md-sys-spacing-sm) var(--md-sys-spacing-md);
+  min-height: 64px;
+  padding-block: var(--md-sys-spacing-sm);
+}
+
+.appbar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--md-sys-spacing-sm);
+  order: 1;
+  color: var(--md-sys-color-on-surface);
+  font-weight: 600;
+}
+
+.appbar__brand:hover {
+  text-decoration: none;
+}
+
+.appbar__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--md-sys-shape-corner-full);
+}
+
+.appbar__name {
+  font-size: var(--md-sys-typescale-title-medium-size);
+}
+
+.appbar__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-spacing-xs);
+  flex: 1;
+  justify-content: center;
+  order: 2;
+}
+
+.appbar__link {
+  padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-md);
+  border-radius: var(--md-sys-shape-corner-full);
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  white-space: nowrap;
+  transition:
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.appbar__link:hover {
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  text-decoration: none;
+}
+
+.appbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-spacing-xs);
+  order: 3;
+}
+
+@media (max-width: 680px) {
+  .appbar__actions {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .appbar__nav {
+    order: 3;
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: var(--md-sys-spacing-xs);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .appbar__nav::-webkit-scrollbar {
+    display: none;
+  }
+}
