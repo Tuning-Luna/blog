@@ -6,7 +6,11 @@ import PostLayout from './components/PostLayout.vue'
 import SiteFooter from './components/SiteFooter.vue'
 import SiteHeader from './components/SiteHeader.vue'
 
-const { frontmatter, page } = useData()
+const { frontmatter, page, site } = useData()
+
+// 站点背景图：docs/public/JSA-279k.png（暗色纹理照片）。
+// 用运行时 base 拼 URL，适配 GitHub Pages 项目页 /<repo>/ 与用户页 /。
+const siteBgImage = `url(${site.value.base}JSA-279k.png)`
 
 // 页面布局优先级：
 //   1. frontmatter.layout 显式指定（home → 个人主页；post → 文章页）
@@ -21,7 +25,7 @@ const layout = computed(() => {
 </script>
 
 <template>
-  <div class="site-bg" aria-hidden="true" />
+  <div class="site-bg" aria-hidden="true" :style="{ '--site-bg-image': siteBgImage }" />
   <SiteHeader />
   <HomeLayout v-if="layout === 'home'" />
   <PostLayout v-else-if="layout === 'post'" />

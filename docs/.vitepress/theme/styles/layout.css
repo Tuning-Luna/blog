@@ -3,21 +3,9 @@
    .site-bg 与 .appbar 的玻璃样式来自 design-system（此处只补站点追加规则）。
    ===================================================================== */
 
-/* 站点背景图 —— 参数化 token（默认 none）。这里用主题色渐变占位，让玻璃有内容可模糊；
-   部署时可替换为暗色纹理照片：url('/your-photo.png')。 */
-:root {
-  --site-bg-image:
-    radial-gradient(
-      120% 90% at 85% 10%,
-      color-mix(in srgb, var(--md-sys-color-primary-container) 55%, transparent),
-      transparent 60%
-    ),
-    radial-gradient(
-      110% 85% at 12% 95%,
-      color-mix(in srgb, var(--md-sys-color-tertiary-container) 45%, transparent),
-      transparent 55%
-    );
-}
+/* 站点背景图 —— design-system 参数化 token（默认 none，见 site-background.css）。
+   .site-bg 负责模糊/缩放/主题蒙层；实际图片 URL（docs/public/JSA-279k.png）由
+   Layout.vue 用 useData().site.base 运行时注入，保证 GitHub Pages 的 base 正确。 */
 
 /* 主内容层：浮在 .site-bg（z-index:0）之上。 */
 .site-main {

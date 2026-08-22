@@ -83,6 +83,8 @@ npm run typecheck  # vue-tsc 类型检查
 ## 主题架构要点
 
 - **完全自定义主题**（`theme/index.ts` 导出 `{ Layout, enhanceApp }`），不 `extends` DefaultTheme。`<Content />` 渲染 Markdown。
+- **站点背景**：`docs/public/JSA-279k.png`（暗色照片，玻璃模糊层）。`Layout.vue` 用 `useData().site.base`
+  运行时注入 `--site-bg-image`（GitHub Pages 下 base 正确）；模糊/蒙层由 design-system `.site-bg` 处理。
 - **布局分发**（`Layout.vue`）：`frontmatter.layout` 显式指定，或 `blog/posts/*` 自动识别为 `post`，其余为 `doc`。
 - **三态主题**：`theme/composables/useTheme.ts` + config head 内联脚本，localStorage 键 `tuningluna-blog-theme`（两处必须一致）。`appearance: false` 已关闭 VitePress 内置切换。
 - **TOC 依赖 `markdown.headers: true`**（config 已开，别删）。
