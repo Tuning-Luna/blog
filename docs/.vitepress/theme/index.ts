@@ -2,7 +2,6 @@ import type { Theme } from 'vitepress'
 import Layout from './Layout.vue'
 import BlogList from './components/BlogList.vue'
 import ContactSection from './components/ContactSection.vue'
-import GitHubProjects from './components/GitHubProjects.vue'
 import M3Button from './components/M3Button.vue'
 import M3Card from './components/M3Card.vue'
 import M3Chip from './components/M3Chip.vue'
@@ -25,6 +24,5 @@ export default {
     app.component('M3Stat', M3Stat)
     app.component('BlogList', BlogList)
     app.component('ContactSection', ContactSection)
-    app.component('GitHubProjects', GitHubProjects)
   },
 } satisfies Theme

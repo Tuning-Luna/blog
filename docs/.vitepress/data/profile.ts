@@ -10,6 +10,7 @@ export const profile = {
   telegramUrl: 'https://t.me/Bannister4529_bot',
   spotifyUrl: 'https://open.spotify.com/user/31d6ybszeq4mxs3khxyautsuexty',
   bilibiliUrl: 'https://space.bilibili.com/416066123',
+  avatarUrl: 'https://github.com/Tuning-Luna.png?size=256',
   /** GitHub profile bio. */
   bio: "You Read My Bio. That's Enough Social Interaction For One Day.",
 } as const

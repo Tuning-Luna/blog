@@ -1,5 +1,5 @@
 /* =====================================================================
-   个人主页（HomeLayout）。Hero 玻璃卡 + 统计 + 最新文章 + 项目 + 技术栈。
+   个人主页（HomeLayout）。Hero 玻璃卡 + 关于 + 最新文章 + 技术栈 + 联系。
    ===================================================================== */
 
 .home-page {
@@ -93,20 +93,6 @@
   color: var(--md-sys-color-on-surface);
 }
 
-/* ---------- 统计 ---------- */
-
-.home-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--md-sys-spacing-lg);
-}
-
-@media (min-width: 720px) {
-  .home-stats {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
 /* ---------- 最新文章 ---------- */
 
 .home-posts {
@@ -154,79 +140,6 @@
   margin-top: var(--md-sys-spacing-lg);
   display: flex;
   justify-content: flex-end;
-}
-
-/* ---------- 项目 ---------- */
-
-.home-projects {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--md-sys-spacing-lg);
-}
-
-@media (min-width: 720px) {
-  .home-projects {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.home-project {
-  display: flex;
-  flex-direction: column;
-  gap: var(--md-sys-spacing-md);
-  padding: var(--md-sys-spacing-xl);
-  text-decoration: none;
-}
-
-.home-project:hover {
-  text-decoration: none;
-}
-
-.home-project__title {
-  font-family: var(--md-ref-typeface-display);
-  font-size: var(--md-sys-typescale-title-large-size);
-  line-height: var(--md-sys-typescale-title-large-line-height);
-  color: var(--md-sys-color-on-surface);
-  margin: 0;
-}
-
-.home-project__desc {
-  font-size: var(--md-sys-typescale-body-medium-size);
-  line-height: var(--md-sys-typescale-body-medium-line-height);
-  color: var(--md-sys-color-on-surface-variant);
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.home-project__chips {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--md-sys-spacing-xs);
-  margin-top: auto;
-  padding-top: var(--md-sys-spacing-sm);
-}
-
-.home-project__stars {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--md-sys-spacing-xs);
-  font-family: var(--md-ref-typeface-mono);
-  font-size: var(--md-sys-typescale-label-medium-size);
-  color: var(--md-sys-color-on-surface-variant);
-}
-
-.home-project__archived {
-  font-family: var(--md-ref-typeface-mono);
-  font-size: var(--md-sys-typescale-label-medium-size);
-  color: var(--md-sys-color-outline);
-}
-
-.home-project:hover .home-project__title {
-  color: var(--md-sys-color-primary);
 }
 
 /* ---------- 技术栈 ---------- */

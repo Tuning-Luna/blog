@@ -1,25 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { data as posts } from '../../data/posts.data'
-import { githubInfo } from '../../data/github-info'
+import { profile } from '../../data/profile'
 import { techGroups } from '../../data/tech'
 import { formatDate } from '../utils/format'
 import { useScrollReveal } from '../composables/useScrollReveal'
 import ContactSection from './ContactSection.vue'
-import GitHubProjects from './GitHubProjects.vue'
 import M3Button from './M3Button.vue'
 import M3Chip from './M3Chip.vue'
 import M3Section from './M3Section.vue'
-import M3Stat from './M3Stat.vue'
 
 useScrollReveal()
 
 /* 博客真实数据 */
-const postCount = computed(() => posts.length)
 const latest = computed(() => posts.slice(0, 3))
-
-/* GitHub 快照（daily 刷新，见 scripts/fetch-github-info.mjs） */
-const gitHubStats = computed(() => githubInfo.user)
 
 /* 自我介绍（来源：个人主页 i18n/zh.ts about.*） */
 const aboutLines = [
@@ -48,14 +42,14 @@ function handleSpotlight(e: MouseEvent) {
         >
           <img
             class="home-hero__avatar"
-            :src="gitHubStats.avatarUrl"
-            :alt="`${gitHubStats.name} 的头像`"
+            :src="profile.avatarUrl"
+            :alt="`${profile.name} 的头像`"
             width="96"
             height="96"
             loading="lazy"
           />
           <p class="home-hero__eyebrow">Hello, I'm</p>
-          <h1 class="home-hero__name">{{ gitHubStats.name }}</h1>
+          <h1 class="home-hero__name">{{ profile.name }}</h1>
           <p class="home-hero__role">计算机科学（CS）学生 · 开源爱好者</p>
           <p class="home-hero__intro">{{ aboutLines[0] }}</p>
           <div class="home-hero__focus">
@@ -63,8 +57,7 @@ function handleSpotlight(e: MouseEvent) {
           </div>
           <div class="home-hero__actions">
             <M3Button href="/blog/">查看博客</M3Button>
-            <M3Button href="/projects/" variant="tonal">项目</M3Button>
-            <M3Button :href="gitHubStats.htmlUrl" variant="text">GitHub</M3Button>
+            <M3Button :href="profile.githubUrl" variant="text">GitHub</M3Button>
           </div>
         </div>
       </div>
@@ -80,20 +73,6 @@ function handleSpotlight(e: MouseEvent) {
         <p v-for="(line, i) in aboutLines" :key="i" class="home-about__p">
           {{ line }}
         </p>
-      </div>
-    </M3Section>
-
-    <!-- 统计（GitHub 快照 + 博客） -->
-    <M3Section
-      eyebrow="stats"
-      title="本站一览"
-      subtitle="GitHub 公开数据快照（{{ githubInfo.retrievedAt }}），每天自动更新。"
-    >
-      <div class="home-stats">
-        <M3Stat icon="people" :value="gitHubStats.followers" label="Followers" />
-        <M3Stat icon="star" :value="gitHubStats.totalStars" label="Star 总数" />
-        <M3Stat icon="folder" :value="gitHubStats.publicRepos" label="公开仓库" />
-        <M3Stat icon="commit" :value="postCount" label="博客文章" />
       </div>
     </M3Section>
 
@@ -117,20 +96,6 @@ function handleSpotlight(e: MouseEvent) {
       </div>
       <div class="home-more">
         <M3Button href="/blog/" variant="text">查看全部文章</M3Button>
-      </div>
-    </M3Section>
-
-    <!-- 项目（GitHub 快照） -->
-    <M3Section
-      eyebrow="projects"
-      title="开源项目"
-      subtitle="来自 GitHub 公开仓库，按 Star 排序（快照 {{ githubInfo.retrievedAt }}）。"
-    >
-      <GitHubProjects :limit="6" />
-      <div class="home-more">
-        <M3Button :href="`${gitHubStats.htmlUrl}?tab=repositories`" variant="text">
-          在 GitHub 查看全部仓库
-        </M3Button>
       </div>
     </M3Section>
 

@@ -105,7 +105,6 @@ export default defineConfigWithTheme<BlogThemeConfig>({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Blog', link: '/blog/' },
-      { text: 'Projects', link: '/projects/' },
       { text: 'About', link: '/about' },
     ],
     lastUpdated: { text: '最后更新' },

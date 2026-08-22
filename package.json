@@ -8,8 +8,7 @@
     "dev": "vitepress dev docs",
     "build": "vitepress build docs",
     "preview": "vitepress preview docs",
-    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
-    "github:info": "node scripts/fetch-github-info.mjs"
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",

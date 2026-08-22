@@ -22,18 +22,15 @@ TuningLuna 的个人博客。基于 **VitePress** 的纯静态站点：本地写
 .
 ├── docs/                      # 站点内容与配置
 │   ├── index.md               # 首页（layout: home，正文由 HomeLayout.vue 渲染）
-│   ├── about.md               # 关于
+│   ├── about.md               # 关于（只保留联系方式）
 │   ├── blog/
 │   │   ├── index.md           # 博客列表（<BlogList /> 组件）
 │   │   └── posts/             # ★ 文章统一放这里（.md）
-│   ├── projects/index.md      # 项目
 │   ├── public/favicon.svg
 │   └── .vitepress/
 │       ├── config.ts          # 站点配置（SEO head / 字体 / markdown / themeConfig）
 │       ├── data/posts.data.ts # ★ 文章数据加载器（createContentLoader）
-│       ├── data/github-info.json  # GitHub 信息快照（生成物，scripts 刷新，勿手改）
-│       ├── data/github-info.ts    # 快照的类型化加载
-│       ├── data/profile.ts        # 人工维护的个人资料（联系方式等）
+│       ├── data/profile.ts        # 人工维护的个人资料（联系方式、头像等）
 │       ├── data/tech.ts           # 技术栈（来源：个人主页）
 │       └── theme/             # ★ 自定义主题
 │           ├── index.ts       # 注册 Layout + 全局组件 + 导入样式
@@ -54,7 +51,6 @@ npm run dev        # 启动开发服务器
 npm run build      # 生产构建 → docs/.vitepress/dist
 npm run preview    # 预览生产构建
 npm run typecheck  # vue-tsc 类型检查
-npm run github:info # 刷新 GitHub 信息快照（docs/.vitepress/data/github-info.json）
 ```
 
 ## design-system 使用规则（硬性约束）
@@ -112,15 +108,9 @@ npm run github:info # 刷新 GitHub 信息快照（docs/.vitepress/data/github-i
 4. 正文以介绍段开头；需要「摘要截断」时用 `<!-- more -->`（`page.excerpt` 会取它之前的内容）。
 5. 本地 `npm run dev` 预览 → 满意后 `git push` 即可自动部署。
 
-## 部署与 GitHub 数据刷新（GitHub Pages）
+## 部署（GitHub Pages）
 
-- workflow：`.github/workflows/deploy.yml`，触发条件：
-  - push main
-  - **schedule 每日 UTC 16:23**（= 北京时间次日 00:23）
-  - workflow_dispatch 手动
-- 每次构建前先跑 `npm run github:info`（`scripts/fetch-github-info.mjs`），用 GitHub API
-  刷新 `docs/.vitepress/data/github-info.json`（followers/stars/repos/top repos），有变化则
-  以 `[skip ci]` 提交（GITHUB_TOKEN 的 push 不会再次触发 workflow，无死循环）。
+- workflow：`.github/workflows/deploy.yml`（push main → `npm ci` → build → deploy-pages；手动 workflow_dispatch）。
 - `BASE_URL` 由 CI 注入 `/<repo>/`；config.ts 对用户页（`<user>.github.io`）自动归一化为 `/`。
 - 首次启用：仓库 Settings → Pages → Source 选 **GitHub Actions**，之后每次 push main 自动部署。
 - 本地模拟 CI 构建（Windows Bash 需禁 MSYS 路径转换）：
@@ -129,10 +119,10 @@ npm run github:info # 刷新 GitHub 信息快照（docs/.vitepress/data/github-i
 ## 个人资料与联系方式
 
 - 主页/关于页展示的姓名、简介、技术栈、联系方式来自**真实来源**（个人主页仓库
-  `Tuning-Luna.github.io` 的 `profile.ts` / `i18n/zh.ts` / `tech.ts` / GitHub API）。
-- 修改联系方式改 `docs/.vitepress/data/profile.ts`（人工维护）；GitHub 数字改
-  `github-info.json`（脚本生成，跑 `npm run github:info`）。
-- 联系方式 section 组件：`ContactSection.vue`（GitHub/Gmail/Discord/Telegram/Spotify/Bilibili）。
+  `Tuning-Luna.github.io` 的 `profile.ts` / `i18n/zh.ts` / `tech.ts`）。
+- 修改联系方式与头像改 `docs/.vitepress/data/profile.ts`（人工维护）。
+- 联系方式 section 组件：`ContactSection.vue`（GitHub/Gmail/Discord/Telegram/Spotify/Bilibili），
+  用于首页与 About 页。
 
 ## 工作纪律
 
