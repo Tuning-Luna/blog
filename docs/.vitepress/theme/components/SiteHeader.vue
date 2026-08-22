@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useData, useRoute } from 'vitepress'
+import LocalSearch from './LocalSearch.vue'
 import M3Icon from './M3Icon.vue'
 import ThemeToggle from './ThemeToggle.vue'
 
@@ -42,6 +43,7 @@ const githubUrl = computed(() => site.value.themeConfig.siteMeta?.github ?? '#')
       </nav>
 
       <div class="appbar__actions">
+        <LocalSearch />
         <ThemeToggle />
         <a
           class="appbar__social"

@@ -31,11 +31,11 @@ TuningLuna 的个人博客。基于 **VitePress** 的纯静态站点：本地写
 │       ├── config.ts          # 站点配置（SEO head / 字体 / markdown / themeConfig）
 │       ├── data/posts.data.ts # ★ 文章数据加载器（createContentLoader）
 │       ├── data/profile.ts        # 人工维护的个人资料（联系方式、头像等）
-│       ├── data/tech.ts           # 技术栈（来源：个人主页）
 │       └── theme/             # ★ 自定义主题
 │           ├── index.ts       # 注册 Layout + 全局组件 + 导入样式
 │           ├── Layout.vue     # 按 frontmatter.layout 分发 home/post/doc
-│           ├── components/    # M3 组件（Vue 重写）+ BlogList/PostLayout 等
+│           ├── env.d.ts       # @localSearchIndex 虚拟模块类型声明
+│           ├── components/    # M3 组件（Vue 重写）+ BlogList/PostLayout/LocalSearch 等
 │           ├── composables/   # useTheme（三态主题）/ useScrollReveal
 │           ├── styles/        # index.css 按顺序导入 design-system + 站点层叠样式
 │           └── utils/format.ts
@@ -88,6 +88,17 @@ npm run typecheck  # vue-tsc 类型检查
 - **TOC 依赖 `markdown.headers: true`**（config 已开，别删）。
 - **代码块**：VitePress 构建期输出 `div.language-x > pre.shiki.vp-code`，span 携带 `--shiki-light/--shiki-dark`；明暗切换规则在 `styles/code.css`（双通道）。复制按钮由 VitePress 内核自动接线，无需自己实现。
 - **博客数据**：`data/posts.data.ts` 聚合 `docs/blog/posts/*.md`（过滤 `draft`，按 date 倒序，估算阅读时间）。`BlogList.vue` 使用 `createContentLoader` 数据，纯静态、无运行时请求。
+
+## 已启用的官方 VitePress 能力（config.ts）
+
+- **本地搜索**：`themeConfig.search.provider: 'local'`。自定义主题用 `LocalSearch.vue` 消费
+  `@localSearchIndex` 虚拟模块 + `minisearch`（直接依赖）查询；`/` 打开、Esc 关闭、方向键导航。
+  `storeFields` 扩展了 `text` 以支持摘要（默认只存 title/titles）。
+- **sitemap**：`sitemap: { hostname: SITE.url }`，构建生成 `sitemap.xml`（官方能力）。
+- **代码行号**：`markdown.lineNumbers: true`（样式在 `styles/code.css`）。
+- **图片懒加载**：`markdown.image.lazyLoading: true`。
+- **标题去重**：`titleTemplate: true`（首页标题与站名相同自动去重）。
+- **导航**：Home / Blog（About 已删除，其内容即首页的联系区）。
 
 ## 如何创建新文章
 

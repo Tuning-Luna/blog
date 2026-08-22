@@ -18,4 +18,5 @@ export type IconName =
   | 'commit'
   | 'clock'
   | 'calendar'
+  | 'search'
   | 'chevronUp'

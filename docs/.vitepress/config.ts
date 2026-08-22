@@ -5,6 +5,18 @@ interface BlogThemeConfig {
   siteMeta: { author: string; github: string }
   nav: { text: string; link: string }[]
   lastUpdated?: { text: string }
+  /** VitePress 官方本地搜索（自定义主题自建 UI，见 LocalSearch.vue）。 */
+  search?: {
+    provider: 'local'
+    options?: {
+      detailedView?: boolean
+      disableQueryPersistence?: boolean
+      /** 传给构建期 MiniSearch 的选项（storeFields 增加 text 以支持摘要）。 */
+      miniSearch?: {
+        options?: { storeFields?: string[] }
+      }
+    }
+  }
 }
 
 /**
@@ -40,6 +52,14 @@ export default defineConfigWithTheme<BlogThemeConfig>({
   appearance: false,
   cleanUrls: true,
   lastUpdated: true,
+  // 页面标题：保持默认「标题 | 站名」模式（首页标题与站名相同时自动去重，
+  // 避免出现「TuningLuna Blog | TuningLuna Blog」）。
+  titleTemplate: true,
+  // VitePress 官方 sitemap 生成（https://vitepress.dev/guide/sitemap-generation）
+  sitemap: {
+    hostname: SITE.url,
+    lastmodDateOnly: true,
+  },
 
   head: [
     ['link', { rel: 'icon', href: `${base}favicon.svg`, type: 'image/svg+xml' }],
@@ -94,6 +114,9 @@ export default defineConfigWithTheme<BlogThemeConfig>({
       light: 'github-light',
       dark: 'github-dark',
     },
+    // 官方能力：图片懒加载 + 代码块行号。
+    image: { lazyLoading: true },
+    lineNumbers: true,
   },
 
   themeConfig: {
@@ -105,8 +128,19 @@ export default defineConfigWithTheme<BlogThemeConfig>({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Blog', link: '/blog/' },
-      { text: 'About', link: '/about' },
     ],
     lastUpdated: { text: '最后更新' },
+    // VitePress 官方本地搜索（https://vitepress.dev/reference/default-theme-search）
+    // storeFields 增加 text，让自定义搜索 UI 能展示摘要（默认只存 title/titles）。
+    search: {
+      provider: 'local',
+      options: {
+        miniSearch: {
+          options: {
+            storeFields: ['title', 'titles', 'text'],
+          },
+        },
+      },
+    },
   },
 })

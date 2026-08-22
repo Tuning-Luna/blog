@@ -1,0 +1,151 @@
+/* =====================================================================
+   本地搜索（LocalSearch.vue）：appbar 按钮 + 模态框。
+   模态面板用玻璃配方（surface-container-low + blur），遮罩用半透明 scrim。
+   ===================================================================== */
+
+/* ---------- 模态框 ---------- */
+
+.local-search {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--md-sys-spacing-4xl) var(--md-sys-spacing-lg);
+  background-color: color-mix(in srgb, var(--md-sys-color-scrim) 40%, transparent);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.local-search__panel {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - var(--md-sys-spacing-5xl));
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-low) calc(var(--md-glass-opacity) * 100%),
+    transparent
+  );
+  -webkit-backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  border: 1px solid var(--md-glass-border);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  box-shadow: var(--md-sys-elevation-level3), var(--md-glass-highlight);
+  overflow: hidden;
+}
+
+/* ---------- 输入行 ---------- */
+
+.local-search__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-spacing-md);
+  padding: var(--md-sys-spacing-md) var(--md-sys-spacing-lg);
+  border-bottom: 1px solid var(--md-glass-border);
+}
+
+.local-search__icon {
+  flex: 0 0 auto;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.local-search__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--md-ref-typeface);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  outline: none;
+}
+
+.local-search__input::placeholder {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.local-search__input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+.local-search__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  transition: background-color var(--md-sys-motion-duration-short2)
+    var(--md-sys-motion-easing-standard);
+}
+
+.local-search__close:hover {
+  background-color: var(--md-sys-color-surface-container-high);
+}
+
+/* ---------- 状态与结果 ---------- */
+
+.local-search__status {
+  padding: var(--md-sys-spacing-xl);
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  text-align: center;
+}
+
+.local-search__results {
+  list-style: none;
+  margin: 0;
+  padding: var(--md-sys-spacing-sm);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-sys-spacing-xs);
+}
+
+.local-search__result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-sys-spacing-xs);
+  padding: var(--md-sys-spacing-md) var(--md-sys-spacing-lg);
+  border-radius: var(--md-sys-shape-corner-medium);
+  text-decoration: none;
+  transition: background-color var(--md-sys-motion-duration-short2)
+    var(--md-sys-motion-easing-standard);
+}
+
+.local-search__result:hover {
+  text-decoration: none;
+  background-color: var(--md-sys-color-surface-container);
+}
+
+.local-search__result--active {
+  background-color: var(--md-sys-color-surface-container-high);
+}
+
+.local-search__title {
+  font-family: var(--md-ref-typeface-display);
+  font-size: var(--md-sys-typescale-title-medium-size);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+  color: var(--md-sys-color-on-surface);
+}
+
+.local-search__titles {
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-label-small-size);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.local-search__snippet {
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  color: var(--md-sys-color-on-surface-variant);
+  overflow-wrap: break-word;
+}

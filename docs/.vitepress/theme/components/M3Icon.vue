@@ -42,6 +42,7 @@ const STROKE: Partial<Record<IconName, string>> = {
   fork: 'M12 12v9M12 12a3 3 0 0 0-3-3M12 12a3 3 0 0 1 3-3M6 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM18 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM12 9v3',
   clock: 'M12 1a11 11 0 1 0 0 22 11 11 0 0 0 0-22ZM12 6v6l4 2',
   calendar: 'M3 4h18v4H3zM3 8h18v12H3zM8 2v4M16 2v4',
+  search: 'M11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM21 21l-4.35-4.35',
   chevronUp: 'm18 15-6-6-6 6',
 }
 </script>

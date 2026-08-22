@@ -43,6 +43,30 @@
   padding: 0;
 }
 
+/* 代码行号（markdown.lineNumbers: true 时 VitePress 输出
+   <div class="line-numbers-wrapper"> 内含 <span class="line-number">N</span>）。 */
+.vp-doc div[class*='language-'].line-numbers-mode .line-numbers-wrapper {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 3.25rem;
+  padding-block: var(--md-sys-spacing-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  border-right: 1px solid var(--md-glass-border);
+  color: color-mix(in srgb, var(--md-sys-color-on-surface-variant) 55%, transparent);
+  font-family: var(--md-ref-typeface-mono);
+  font-size: 0.9em;
+  line-height: 1.7;
+  user-select: none;
+  pointer-events: none;
+}
+
+.vp-doc div[class*='language-'].line-numbers-mode pre.vp-code {
+  padding-inline-start: calc(3.25rem + var(--md-sys-spacing-md));
+}
+
 /* 语言标签：右下角，mono 小字。 */
 .vp-doc div[class*='language-'] .lang {
   position: absolute;
