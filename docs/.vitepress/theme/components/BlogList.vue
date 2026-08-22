@@ -1,25 +1,26 @@
 <script setup lang="ts">
+/**
+ * 博客列表页 —— 遵循 VitePress 官方 createContentLoader 模式（guide/data-loading）：
+ * 一个干净的按日期倒序的文章列表，不引入侧栏/复杂筛选 UI。
+ * 过滤通过每篇文章上的 分类/标签 链接触发（URL query ?cat=&tag=&page=），轻量且可分享。
+ */
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import { data as posts, type Post } from '../../data/posts.data'
-import { yearOf } from '../utils/format'
-import BlogCard from './BlogCard.vue'
-import BlogSidebar from './BlogSidebar.vue'
+import { formatDate, yearOf } from '../utils/format'
 
-const PER_PAGE = 6
+const PER_PAGE = 8
 
 const activeCategory = ref<string | null>(null)
 const activeTag = ref<string | null>(null)
-const activeYear = ref<string | null>(null)
 const page = ref(1)
 
-/* ---------- URL query 同步（?cat=&tag=&year=&page=），筛选结果可分享 ---------- */
+/* ---------- URL query 同步 ---------- */
 
 function parseQuery() {
   if (typeof window === 'undefined') return
   const q = new URLSearchParams(window.location.search)
   activeCategory.value = q.get('cat')
   activeTag.value = q.get('tag')
-  activeYear.value = q.get('year')
   const p = Number(q.get('page'))
   page.value = Number.isInteger(p) && p > 0 ? p : 1
 }
@@ -29,62 +30,23 @@ function syncQuery() {
   const q = new URLSearchParams()
   if (activeCategory.value) q.set('cat', activeCategory.value)
   if (activeTag.value) q.set('tag', activeTag.value)
-  if (activeYear.value) q.set('year', activeYear.value)
   if (page.value > 1) q.set('page', String(page.value))
   const s = q.toString()
   window.history.replaceState(null, '', s ? `/blog/?${s}` : '/blog/')
 }
 
 onMounted(parseQuery)
-watch([activeCategory, activeTag, activeYear, page], syncQuery)
+watch([activeCategory, activeTag, page], syncQuery)
 
-/* ---------- 派生数据 ---------- */
+/* ---------- 数据 ---------- */
 
-const isFiltered = computed(
-  () => !!(activeCategory.value || activeTag.value || activeYear.value),
-)
-
-// 精选卡只在无筛选时展示（筛选时应看到的是匹配结果）
-const featured = computed<Post | null>(
-  () => (isFiltered.value ? null : posts.find((p) => p.featured) ?? posts[0] ?? null),
-)
-
-const list = computed(() => posts.filter((p) => p.url !== featured.value?.url))
-
-const categories = computed(() => {
-  const m = new Map<string, number>()
-  for (const p of posts) for (const c of p.categories) m.set(c, (m.get(c) ?? 0) + 1)
-  return [...m.entries()]
-    .map(([name, count]) => ({ name, count }))
-    .sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN'))
-})
-
-const tags = computed(() => {
-  const m = new Map<string, number>()
-  for (const p of posts) for (const t of p.tags) m.set(t, (m.get(t) ?? 0) + 1)
-  return [...m.entries()]
-    .map(([name, count]) => ({ name, count }))
-    .sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN'))
-})
-
-const years = computed(() => {
-  const m = new Map<string, number>()
-  for (const p of posts) {
-    const y = yearOf(p.date)
-    if (!y) continue
-    m.set(y, (m.get(y) ?? 0) + 1)
-  }
-  return [...m.entries()]
-    .map(([year, count]) => ({ year, count }))
-    .sort((a, b) => +b.year - +a.year)
-})
+const isFiltered = computed(() => !!(activeCategory.value || activeTag.value))
 
 const filtered = computed(() =>
-  list.value.filter(
+  posts.filter(
     (p) =>
       (!activeCategory.value || p.categories.includes(activeCategory.value)) &&
-      (!activeTag.value || p.tags.includes(activeTag.value)) &&
-      (!activeYear.value || yearOf(p.date) === activeYear.value),
+      (!activeTag.value || p.tags.includes(activeTag.value)),
   ),
 )
 
@@ -96,38 +58,35 @@ const paginated = computed(() =>
   filtered.value.slice((page.value - 1) * PER_PAGE, page.value * PER_PAGE),
 )
 
-// 过滤后页码越界时回退到最后一页
 watchEffect(() => {
   if (page.value > pageCount.value) page.value = pageCount.value
 })
 
-const filterSummary = computed(() => {
-  const parts: string[] = []
-  if (activeCategory.value) parts.push(`分类：${activeCategory.value}`)
-  if (activeTag.value) parts.push(`标签：${activeTag.value}`)
-  if (activeYear.value) parts.push(`${activeYear.value} 年`)
-  return parts.join(' · ')
+/* 归档：按年分组 */
+const archive = computed(() => {
+  const years = new Map<string, Post[]>()
+  for (const p of posts) {
+    const y = yearOf(p.date)
+    if (!y) continue
+    if (!years.has(y)) years.set(y, [])
+    years.get(y)!.push(p)
+  }
+  return [...years.entries()].sort((a, b) => +b[0] - +a[0])
 })
 
-function setCategory(name: string | null) {
-  activeCategory.value = name
+function filterCategory(name: string) {
+  activeCategory.value = activeCategory.value === name ? null : name
   page.value = 1
 }
 
-function setTag(name: string | null) {
-  activeTag.value = name
-  page.value = 1
-}
-
-function setYear(year: string | null) {
-  activeYear.value = year
+function filterTag(name: string) {
+  activeTag.value = activeTag.value === name ? null : name
   page.value = 1
 }
 
 function clearFilters() {
   activeCategory.value = null
   activeTag.value = null
-  activeYear.value = null
   page.value = 1
 }
 
@@ -137,80 +96,105 @@ function setPage(n: number) {
 </script>
 
 <template>
-  <main class="site-main blog-page">
-    <!-- 标题 -->
-    <section class="m3-section blog-hero">
-      <div class="container">
-        <header class="m3-section__header">
-          <span class="m3-section__eyebrow">blog</span>
-          <h1 class="m3-section__title">Blog</h1>
-        </header>
+  <main class="site-main blog-list">
+    <div class="blog-list__container">
+      <!-- 标题 -->
+      <header class="blog-list__header">
+        <span class="blog-list__eyebrow">blog</span>
+        <h1 class="blog-list__title">Blog</h1>
+      </header>
+
+      <!-- 筛选状态条（仅筛选时显示） -->
+      <div v-if="isFiltered" class="blog-list__filterbar" role="status">
+        <span class="blog-list__filterbar-text">
+          {{ activeCategory ? `分类：${activeCategory}` : '' }}
+          {{ activeTag ? `标签：${activeTag}` : '' }}
+          · 共 {{ filtered.length }} 篇
+        </span>
+        <button type="button" class="blog-list__clear" @click="clearFilters">
+          清除筛选
+        </button>
       </div>
-    </section>
 
-    <!-- 双列：主内容 + 筛选侧栏 -->
-    <div class="blog-layout">
-      <div class="blog-layout__main">
-        <!-- 精选 -->
-        <section v-if="featured" class="blog-section">
-          <BlogCard :post="featured" big />
-        </section>
+      <!-- 文章列表：每行一个玻璃卡片 -->
+      <ul v-if="paginated.length" class="blog-list__items">
+        <li v-for="p in paginated" :key="p.url">
+          <article class="blog-list__item">
+            <div class="blog-list__item-meta">
+              <time :datetime="p.date" class="blog-list__date">
+                {{ formatDate(p.date) }}
+              </time>
+              <span v-if="p.categories.length" class="blog-list__category">
+                <button
+                  type="button"
+                  class="blog-list__link blog-list__link--category"
+                  :class="{ 'is-active': activeCategory === p.categories[0] }"
+                  @click="filterCategory(p.categories[0])"
+                >
+                  {{ p.categories[0] }}
+                </button>
+              </span>
+            </div>
+            <a :href="p.url" class="blog-list__item-title">{{ p.title }}</a>
+            <p v-if="p.description" class="blog-list__item-desc">
+              {{ p.description }}
+            </p>
+            <div v-if="p.tags.length" class="blog-list__tags">
+              <button
+                v-for="t in p.tags"
+                :key="t"
+                type="button"
+                class="blog-list__link blog-list__link--tag"
+                :class="{ 'is-active': activeTag === t }"
+                @click="filterTag(t)"
+              >
+                #{{ t }}
+              </button>
+            </div>
+          </article>
+        </li>
+      </ul>
+      <p v-else class="blog-list__empty">没有匹配的文章。</p>
 
-        <!-- 筛选状态条 -->
-        <div v-if="isFiltered" class="blog-filterbar" role="status">
-          <span class="blog-filterbar__text">
-            {{ filterSummary }} · 共 {{ filtered.length }} 篇
-          </span>
-          <button type="button" class="blog-filterbar__clear" @click="clearFilters">
-            清除筛选
-          </button>
+      <!-- 分页 -->
+      <nav v-if="pageCount > 1" class="blog-list__pagination" aria-label="文章分页">
+        <button
+          type="button"
+          class="blog-list__page-btn"
+          :disabled="page === 1"
+          @click="setPage(page - 1)"
+        >
+          上一页
+        </button>
+        <span class="blog-list__page-info">{{ page }} / {{ pageCount }}</span>
+        <button
+          type="button"
+          class="blog-list__page-btn"
+          :disabled="page === pageCount"
+          @click="setPage(page + 1)"
+        >
+          下一页
+        </button>
+      </nav>
+
+      <!-- 归档 -->
+      <section class="blog-list__archive" aria-labelledby="blog-archive-title">
+        <h2 id="blog-archive-title" class="blog-list__archive-title">归档</h2>
+        <div v-for="[year, items] in archive" :key="year" class="blog-list__year">
+          <h3 class="blog-list__year-title">
+            {{ year }} 年
+            <span class="blog-list__year-count">{{ items.length }}</span>
+          </h3>
+          <ul class="blog-list__archive-list">
+            <li v-for="p in items" :key="p.url" class="blog-list__archive-item">
+              <time :datetime="p.date" class="blog-list__archive-date">
+                {{ formatDate(p.date) }}
+              </time>
+              <a :href="p.url" class="blog-list__archive-link">{{ p.title }}</a>
+            </li>
+          </ul>
         </div>
-
-        <!-- 全部文章（分页） -->
-        <section class="blog-section">
-          <h2 class="blog-section__heading">
-            {{ isFiltered ? '筛选结果' : '全部文章' }}
-          </h2>
-          <p v-if="paginated.length === 0" class="blog-empty">
-            没有匹配的文章。
-          </p>
-          <div v-else class="blog-grid">
-            <BlogCard v-for="p in paginated" :key="p.url" :post="p" />
-          </div>
-          <nav v-if="pageCount > 1" class="pagination" aria-label="文章分页">
-            <button
-              class="pagination__btn"
-              type="button"
-              :disabled="page === 1"
-              @click="setPage(page - 1)"
-            >
-              上一页
-            </button>
-            <span class="pagination__info">{{ page }} / {{ pageCount }}</span>
-            <button
-              class="pagination__btn"
-              type="button"
-              :disabled="page === pageCount"
-              @click="setPage(page + 1)"
-            >
-              下一页
-            </button>
-          </nav>
-        </section>
-      </div>
-
-      <BlogSidebar
-        :categories="categories"
-        :tags="tags"
-        :years="years"
-        :active-category="activeCategory"
-        :active-tag="activeTag"
-        :active-year="activeYear"
-        @update:category="setCategory"
-        @update:tag="setTag"
-        @update:year="setYear"
-        @clear="clearFilters"
-      />
+      </section>
     </div>
   </main>
 </template>

@@ -56,6 +56,15 @@
 
 .home-latest .blog-grid {
   margin-top: var(--md-sys-spacing-lg);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--md-sys-spacing-xl);
+}
+
+@media (min-width: 720px) {
+  .home-latest .blog-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .home-more {
