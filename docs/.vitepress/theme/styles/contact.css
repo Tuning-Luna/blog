@@ -7,12 +7,18 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--md-sys-spacing-lg);
-  max-width: 560px;
+  max-width: 720px;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 560px) {
   .contact__links {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 820px) {
+  .contact__links {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
