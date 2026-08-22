@@ -42,6 +42,15 @@ function handleSpotlight(e: MouseEvent) {
           <h1 class="home-hero__name">{{ profile.name }}</h1>
           <p class="home-hero__role">计算机科学（CS）学生 · 开源爱好者</p>
           <p class="home-hero__intro">记录前端、开源与 AI Agent 的思考。</p>
+          <p class="home-hero__site">
+            <a
+              :href="profile.siteUrl"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              个人主页：{{ profile.siteUrl }}
+            </a>
+          </p>
           <div class="home-hero__actions">
             <M3Button href="/blog/">查看博客</M3Button>
             <M3Button :href="profile.githubUrl" variant="text">GitHub</M3Button>

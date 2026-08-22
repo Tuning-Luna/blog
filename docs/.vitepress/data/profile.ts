@@ -4,6 +4,8 @@
  */
 export const profile = {
   name: 'Tuning-Luna',
+  /** 个人主页（Tuning-Luna.github.io） */
+  siteUrl: 'https://tuning-luna.github.io/',
   githubUrl: 'https://github.com/Tuning-Luna',
   gmailUrl: 'mailto:tuningluna1206@gmail.com',
   discordUrl: 'https://discord.com/users/1220524033955729428',

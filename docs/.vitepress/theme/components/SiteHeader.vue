@@ -25,7 +25,7 @@ const githubUrl = computed(() => site.value.themeConfig.siteMeta?.github ?? '#')
   <header class="appbar">
     <div class="container appbar__inner">
       <a class="appbar__brand" href="/" aria-label="回到首页">
-        <span class="appbar__avatar appbar__avatar--text" aria-hidden="true">TL</span>
+        <span class="appbar__avatar appbar__avatar--text" aria-hidden="true">TB</span>
         <span class="appbar__name">{{ site.title }}</span>
       </a>
 
