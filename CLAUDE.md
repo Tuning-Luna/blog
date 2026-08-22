@@ -35,7 +35,7 @@ TuningLuna 的个人博客。基于 **VitePress** 的纯静态站点：本地写
 │           ├── index.ts       # 注册 Layout + 全局组件 + 导入样式
 │           ├── Layout.vue     # 按 frontmatter.layout 分发 home/post/doc
 │           ├── env.d.ts       # @localSearchIndex 虚拟模块类型声明
-│           ├── components/    # M3 组件（Vue 重写）+ BlogList/PostLayout/LocalSearch 等
+│           ├── components/    # M3 组件（Vue 重写）+ BlogList/BlogSidebar/PostLayout/LocalSearch 等
 │           ├── composables/   # useTheme（三态主题）/ useScrollReveal
 │           ├── vendor/        # ★ 从 design-system 复制的 CSS（自包含，见 vendor/README.md）
 │           ├── styles/        # index.css 按顺序导入 vendor CSS + 站点层叠样式
