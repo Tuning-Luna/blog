@@ -1,0 +1,95 @@
+{
+  "retrievedAt": "2026-08-22",
+  "user": {
+    "login": "Tuning-Luna",
+    "name": "Tuning-Luna",
+    "bio": "You Read My Bio. That's Enough Social Interaction For One Day.",
+    "htmlUrl": "https://github.com/Tuning-Luna",
+    "avatarUrl": "https://github.com/Tuning-Luna.png?size=256",
+    "followers": 16,
+    "publicRepos": 24,
+    "totalStars": 112
+  },
+  "topRepos": [
+    {
+      "name": "HFUT_XC_Study_Things",
+      "description": " 合肥工业大学（HFUT）宣城计科（CS）专业：本人实验/大作业答案全收录。同步整理大一到大四复习笔记、历年真题及 PPT等学习资料。持续更新中✨",
+      "htmlUrl": "https://github.com/Tuning-Luna/HFUT_XC_Study_Things",
+      "homepage": "https://tuning-luna.github.io/HFUT_XC_Study_Things/",
+      "language": "C++",
+      "stars": 77,
+      "forks": 4,
+      "archived": false
+    },
+    {
+      "name": "github-avatar-generator",
+      "description": "[Unofficial] Generate GitHub-style identicon avatars from any string❤️",
+      "htmlUrl": "https://github.com/Tuning-Luna/github-avatar-generator",
+      "homepage": "https://tuning-luna.github.io/github-avatar-generator/",
+      "language": "JavaScript",
+      "stars": 11,
+      "forks": 1,
+      "archived": false
+    },
+    {
+      "name": "kards-decks-collection-scraper",
+      "description": "Automated crawler for Kards CCG card images — fetches all cards via GraphQL API, organizes by nation & cost, converts AVIF to PNG. | Kards 卡牌图片自动爬取工具 — 通过 GraphQL 接口拉取全量卡牌，按国家与费用分类，AVIF 自动转 PNG ",
+      "htmlUrl": "https://github.com/Tuning-Luna/kards-decks-collection-scraper",
+      "homepage": "",
+      "language": "Python",
+      "stars": 9,
+      "forks": 0,
+      "archived": false
+    },
+    {
+      "name": "hfut-xc-login-reverse",
+      "description": "合肥工业大学（HFUT） 登录逆向（CAS）",
+      "htmlUrl": "https://github.com/Tuning-Luna/hfut-xc-login-reverse",
+      "homepage": "",
+      "language": "Python",
+      "stars": 5,
+      "forks": 0,
+      "archived": false
+    },
+    {
+      "name": "tuning-bao",
+      "description": "使用 UniApp 开发，类似电商购物平台的模板。灵感来源于淘宝，涵盖首页、分类、商品详情、购物车、结算等模块。",
+      "htmlUrl": "https://github.com/Tuning-Luna/tuning-bao",
+      "homepage": "",
+      "language": "Vue",
+      "stars": 5,
+      "forks": 1,
+      "archived": false
+    },
+    {
+      "name": "class-quiz-system",
+      "description": "合肥工业大学(HFUT)程序设计课设：课堂答题系统",
+      "htmlUrl": "https://github.com/Tuning-Luna/class-quiz-system",
+      "homepage": "",
+      "language": "C++",
+      "stars": 1,
+      "forks": 0,
+      "archived": false
+    },
+    {
+      "name": "my-list",
+      "description": "合肥工业大学(HFUT)数据结构课设：实现简易链表",
+      "htmlUrl": "https://github.com/Tuning-Luna/my-list",
+      "homepage": "",
+      "language": "C++",
+      "stars": 1,
+      "forks": 0,
+      "archived": false
+    },
+    {
+      "name": "my-stack",
+      "description": "合肥工业大学(HFUT)数据结构课设：用数组（Array）和链表（Link）实现栈（Stack）",
+      "htmlUrl": "https://github.com/Tuning-Luna/my-stack",
+      "homepage": "",
+      "language": "C++",
+      "stars": 1,
+      "forks": 0,
+      "archived": false
+    }
+  ]
+}

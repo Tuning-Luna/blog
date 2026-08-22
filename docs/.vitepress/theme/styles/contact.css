@@ -1,0 +1,62 @@
+/* =====================================================================
+   Contact 联系方式卡片（从个人主页 src/sections/Contact.css 移植，
+   玻璃配方与 token 保持一致，类名 contact-* 为页面级命名）。
+   ===================================================================== */
+
+.contact__links {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--md-sys-spacing-lg);
+  max-width: 560px;
+}
+
+@media (min-width: 480px) {
+  .contact__links {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.contact__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--md-sys-spacing-sm);
+  padding: var(--md-sys-spacing-xl);
+  border-radius: var(--md-sys-shape-corner-large);
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-low) calc(var(--md-glass-opacity) * 100%),
+    transparent
+  );
+  -webkit-backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  border: 1px solid var(--md-glass-border);
+  color: var(--md-sys-color-on-surface);
+  transition:
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    box-shadow var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-emphasized-decelerate);
+}
+
+.contact__card:hover {
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-primary);
+  text-decoration: none;
+  box-shadow: var(--md-sys-elevation-level2), var(--md-glass-highlight);
+  transform: translateY(-2px);
+}
+
+.contact__card svg {
+  color: var(--md-sys-color-primary);
+}
+
+.contact__card-label {
+  font-size: var(--md-sys-typescale-title-medium-size);
+  font-weight: var(--md-sys-typescale-title-medium-weight);
+  letter-spacing: var(--md-sys-typescale-title-medium-tracking);
+}
+
+.contact__card-desc {
+  font-size: var(--md-sys-typescale-body-medium-size);
+  color: var(--md-sys-color-on-surface-variant);
+}

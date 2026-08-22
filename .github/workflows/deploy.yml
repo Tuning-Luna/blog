@@ -3,11 +3,15 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  schedule:
+    # 每天刷新 GitHub 信息快照并重新部署。
+    # UTC 16:23 = 北京时间次日 00:23，避开整点 cron 拥堵。
+    - cron: '23 16 * * *'
   workflow_dispatch:
 
-# 权限：只读仓库内容，写入 Pages，请求 OIDC token（deploy-pages 需要）。
+# 权限：可写内容（数据刷新步骤要提交快照）+ 写入 Pages + OIDC（deploy-pages 需要）。
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -31,6 +35,24 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      # 每次触发（push / schedule / dispatch）都先刷新 GitHub 信息快照并提交（若变化）。
+      # 失败只告警，用已提交的快照继续构建，避免任务失败。GITHUB_TOKEN 的提交
+      # 不会再次触发 workflow，故无死循环；[skip ci] 防止 PAT 场景下的自触发。
+      - name: Refresh GitHub info snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm run github:info || echo '::warning::github info refresh failed; deploying with the committed snapshot'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if git diff --quiet -- docs/.vitepress/data/github-info.json; then
+            echo 'github info snapshot unchanged — nothing to commit'
+          else
+            git add docs/.vitepress/data/github-info.json
+            git commit -m 'chore(data): refresh GitHub info snapshot [skip ci]'
+            git push || echo '::warning::snapshot commit not pushed (a newer commit likely landed); building with the refreshed working tree anyway'
+          fi
 
       - name: Build
         run: npm run build

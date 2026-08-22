@@ -22,17 +22,11 @@
 }
 
 .home-hero__avatar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 96px;
   height: 96px;
   border-radius: var(--md-sys-shape-corner-full);
-  background-color: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
-  font-family: var(--md-ref-typeface-mono);
-  font-size: var(--md-sys-typescale-headline-medium-size);
-  font-weight: var(--md-sys-typescale-headline-medium-weight);
+  object-fit: cover;
+  border: 2px solid var(--md-sys-color-primary-container);
   box-shadow: var(--md-sys-elevation-level2), var(--md-glass-highlight);
   user-select: none;
 }
@@ -69,6 +63,13 @@
   margin: 0;
 }
 
+.home-hero__focus {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--md-sys-spacing-sm);
+}
+
 .home-hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -77,17 +78,32 @@
   margin-top: var(--md-sys-spacing-md);
 }
 
+/* ---------- 关于 ---------- */
+
+.home-about {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-sys-spacing-md);
+  max-width: 64ch;
+}
+
+.home-about__p {
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  color: var(--md-sys-color-on-surface);
+}
+
 /* ---------- 统计 ---------- */
 
 .home-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--md-sys-spacing-lg);
 }
 
-@media (max-width: 480px) {
+@media (min-width: 720px) {
   .home-stats {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -159,6 +175,11 @@
   flex-direction: column;
   gap: var(--md-sys-spacing-md);
   padding: var(--md-sys-spacing-xl);
+  text-decoration: none;
+}
+
+.home-project:hover {
+  text-decoration: none;
 }
 
 .home-project__title {
@@ -174,25 +195,54 @@
   line-height: var(--md-sys-typescale-body-medium-line-height);
   color: var(--md-sys-color-on-surface-variant);
   margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .home-project__chips {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--md-sys-spacing-xs);
   margin-top: auto;
   padding-top: var(--md-sys-spacing-sm);
 }
 
-.home-project--placeholder {
-  border-style: dashed;
+.home-project__stars {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  text-align: center;
+  gap: var(--md-sys-spacing-xs);
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-label-medium-size);
   color: var(--md-sys-color-on-surface-variant);
 }
 
+.home-project__archived {
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  color: var(--md-sys-color-outline);
+}
+
+.home-project:hover .home-project__title {
+  color: var(--md-sys-color-primary);
+}
+
 /* ---------- 技术栈 ---------- */
+
+.home-tech-group {
+  margin-bottom: var(--md-sys-spacing-xl);
+}
+
+.home-tech-group__title {
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-label-large-size);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-bottom: var(--md-sys-spacing-md);
+}
 
 .home-skills {
   display: flex;
