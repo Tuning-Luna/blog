@@ -69,16 +69,6 @@
   min-width: 0;
 }
 
-/* 桌面：sticky 玻璃面板，随滚动吸在顶栏下方 */
-@media (min-width: 1024px) {
-  .blog-sidebar {
-    position: sticky;
-    top: calc(var(--md-sys-spacing-4xl) + var(--md-sys-spacing-sm));
-    max-height: calc(100vh - var(--md-sys-spacing-5xl));
-    overflow-y: auto;
-  }
-}
-
 .blog-sidebar__panel {
   display: flex;
   flex-direction: column;
