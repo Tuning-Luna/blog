@@ -6,6 +6,7 @@ export type IconName =
   | 'telegram'
   | 'spotify'
   | 'bilibili'
+  | 'globe'
   | 'external'
   | 'arrowRight'
   | 'sun'

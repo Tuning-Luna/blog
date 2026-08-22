@@ -115,7 +115,6 @@ function setPage(n: number) {
         <header class="m3-section__header">
           <span class="m3-section__eyebrow">blog</span>
           <h1 class="m3-section__title">Blog</h1>
-          <p class="m3-section__subtitle">前端、开源与 AI Agent 的笔记与思考。</p>
         </header>
       </div>
     </section>

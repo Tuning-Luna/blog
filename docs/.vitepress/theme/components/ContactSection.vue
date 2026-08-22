@@ -13,6 +13,7 @@ interface ContactLink {
 
 /** 联系方式列表（来源：个人主页 src/data/profile.ts + i18n/zh.ts）。 */
 const LINKS: ContactLink[] = [
+  { id: 'site', href: profile.siteUrl, icon: 'globe', label: '个人主页', desc: 'tuning-luna.github.io' },
   { id: 'github', href: profile.githubUrl, icon: 'github', label: 'GitHub', desc: '开源与代码' },
   { id: 'gmail', href: profile.gmailUrl, icon: 'gmail', label: 'Gmail', desc: '给我发邮件' },
   { id: 'discord', href: profile.discordUrl, icon: 'discord', label: 'Discord', desc: '和我聊天' },
