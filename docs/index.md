@@ -1,12 +1,8 @@
 ---
 title: TuningLuna Blog
+description: TuningLuna 的个人博客 — 前端、开源与 AI Agent 随笔
+layout: home
 ---
 
-# Hello VitePress
-
-This is the minimal VitePress smoke test page.
-
-```ts
-const greeting: string = 'Hello, VitePress!'
-console.log(greeting)
-```
+<!-- 首页由 HomeLayout.vue 渲染（个人卡片 / 统计 / 最新文章 / 项目 / 技术栈）。
+     本文件的正文不会显示，仅提供 frontmatter。 -->

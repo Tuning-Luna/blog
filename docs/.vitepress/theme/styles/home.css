@@ -1,0 +1,201 @@
+/* =====================================================================
+   个人主页（HomeLayout）。Hero 玻璃卡 + 统计 + 最新文章 + 项目 + 技术栈。
+   ===================================================================== */
+
+.home-page {
+  padding-bottom: var(--md-sys-spacing-3xl);
+}
+
+/* ---------- Hero ---------- */
+
+.home-hero {
+  padding-block: var(--md-sys-spacing-4xl) var(--md-sys-spacing-2xl);
+}
+
+.home-hero__panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--md-sys-spacing-md);
+  padding: var(--md-sys-spacing-2xl) var(--md-sys-spacing-xl);
+  text-align: center;
+}
+
+.home-hero__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-headline-medium-size);
+  font-weight: var(--md-sys-typescale-headline-medium-weight);
+  box-shadow: var(--md-sys-elevation-level2), var(--md-glass-highlight);
+  user-select: none;
+}
+
+.home-hero__eyebrow {
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-label-large-size);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--md-sys-color-primary);
+  margin: 0;
+}
+
+.home-hero__name {
+  font-family: var(--md-ref-typeface-display);
+  font-size: var(--md-sys-typescale-display-small-size);
+  line-height: var(--md-sys-typescale-display-small-line-height);
+  color: var(--md-sys-color-on-surface);
+  margin: 0;
+}
+
+.home-hero__role {
+  font-size: var(--md-sys-typescale-title-medium-size);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+}
+
+.home-hero__intro {
+  max-width: 56ch;
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+}
+
+.home-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--md-sys-spacing-md);
+  margin-top: var(--md-sys-spacing-md);
+}
+
+/* ---------- 统计 ---------- */
+
+.home-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--md-sys-spacing-lg);
+}
+
+@media (max-width: 480px) {
+  .home-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- 最新文章 ---------- */
+
+.home-posts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-sys-spacing-md);
+}
+
+.home-post {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-sys-spacing-xs);
+  padding: var(--md-sys-spacing-lg) var(--md-sys-spacing-xl);
+  text-decoration: none;
+}
+
+.home-post:hover {
+  text-decoration: none;
+}
+
+.home-post__date {
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.home-post__title {
+  font-family: var(--md-ref-typeface-display);
+  font-size: var(--md-sys-typescale-title-medium-size);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+  color: var(--md-sys-color-on-surface);
+}
+
+.home-post__desc {
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.home-post:hover .home-post__title {
+  color: var(--md-sys-color-primary);
+}
+
+.home-more {
+  margin-top: var(--md-sys-spacing-lg);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ---------- 项目 ---------- */
+
+.home-projects {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--md-sys-spacing-lg);
+}
+
+@media (min-width: 720px) {
+  .home-projects {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.home-project {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-sys-spacing-md);
+  padding: var(--md-sys-spacing-xl);
+}
+
+.home-project__title {
+  font-family: var(--md-ref-typeface-display);
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  color: var(--md-sys-color-on-surface);
+  margin: 0;
+}
+
+.home-project__desc {
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+}
+
+.home-project__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--md-sys-spacing-xs);
+  margin-top: auto;
+  padding-top: var(--md-sys-spacing-sm);
+}
+
+.home-project--placeholder {
+  border-style: dashed;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* ---------- 技术栈 ---------- */
+
+.home-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--md-sys-spacing-sm);
+}
