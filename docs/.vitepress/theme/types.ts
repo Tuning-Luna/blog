@@ -9,6 +9,7 @@ export type IconName =
   | 'globe'
   | 'external'
   | 'arrowRight'
+  | 'arrowLeft'
   | 'sun'
   | 'moon'
   | 'monitor'

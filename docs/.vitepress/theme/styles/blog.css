@@ -438,6 +438,24 @@
   max-width: 760px;
 }
 
+/* 文章顶部「返回列表」 */
+.post-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--md-sys-spacing-xs);
+  margin-bottom: var(--md-sys-spacing-lg);
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  text-decoration: none;
+  transition: color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.post-back:hover {
+  color: var(--md-sys-color-primary);
+  text-decoration: none;
+}
+
 /* 桌面右侧 TOC 玻璃栏 */
 .post-toc {
   display: none;

@@ -95,6 +95,12 @@ function scrollToTop() {
 
     <!-- 正文列 -->
     <article class="post-layout__content">
+      <!-- 返回列表 -->
+      <a :href="withBase('/posts/')" class="post-back">
+        <M3Icon name="arrowLeft" :size="16" />
+        <span>返回列表</span>
+      </a>
+
       <header class="post-header">
         <div v-if="categories.length" class="post-header__categories">
           <a

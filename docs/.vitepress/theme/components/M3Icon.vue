@@ -36,6 +36,7 @@ const FILLED: Partial<Record<IconName, string>> = {
 const STROKE: Partial<Record<IconName, string>> = {
   external: 'M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6',
   arrowRight: 'M5 12h14M12 5l7 7-7 7',
+  arrowLeft: 'M19 12H5M12 5l-7 7 7 7',
   sun: 'M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10ZM12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42',
   moon: 'M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z',
   monitor: 'M2 4h20v12H2zM8 21h8M12 16v5',
