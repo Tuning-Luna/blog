@@ -23,9 +23,9 @@ TuningLuna 的个人博客。基于 **VitePress** 的纯静态站点：本地写
 ├── docs/                      # 站点内容与配置
 │   ├── index.md               # 首页（layout: home，正文由 HomeLayout.vue 渲染）
 │   ├── about.md               # 关于（只保留联系方式）
-│   ├── blog/
-│   │   ├── index.md           # 博客列表（<BlogList /> 组件）
-│   │   └── posts/             # ★ 文章统一放这里（.md）
+│   ├── posts/
+│   │   ├── index.md           # 博客列表（/posts/，<BlogList /> 组件）
+│   │   └── *.md               # ★ 文章统一放这里（.md，文件名即 URL slug）
 │   ├── public/favicon.svg
 │   └── .vitepress/
 │       ├── config.ts          # 站点配置（SEO head / 字体 / markdown / themeConfig）
@@ -90,11 +90,11 @@ npm run typecheck  # vue-tsc 类型检查
 - **完全自定义主题**（`theme/index.ts` 导出 `{ Layout, enhanceApp }`），不 `extends` DefaultTheme。`<Content />` 渲染 Markdown。
 - **站点背景**：`docs/public/JSA-279k.png`（暗色照片，玻璃模糊层）。`Layout.vue` 用 `useData().site.base`
   运行时注入 `--site-bg-image`（GitHub Pages 下 base 正确）；模糊/蒙层由 design-system `.site-bg` 处理。
-- **布局分发**（`Layout.vue`）：`frontmatter.layout` 显式指定，或 `blog/posts/*` 自动识别为 `post`，其余为 `doc`。
+- **布局分发**（`Layout.vue`）：`frontmatter.layout` 显式指定，或 `posts/*` 自动识别为 `post`，其余为 `doc`。
 - **三态主题**：`theme/composables/useTheme.ts` + config head 内联脚本，localStorage 键 `tuningluna-blog-theme`（两处必须一致）。`appearance: false` 已关闭 VitePress 内置切换。
 - **TOC 依赖 `markdown.headers: true`**（config 已开，别删）。
 - **代码块**：VitePress 构建期输出 `div.language-x > pre.shiki.vp-code`，span 携带 `--shiki-light/--shiki-dark`；明暗切换规则在 `styles/code.css`（双通道）。复制按钮由 VitePress 内核自动接线，无需自己实现。
-- **博客数据**：`data/posts.data.ts` 聚合 `docs/blog/posts/*.md`（过滤 `draft`，按 date 倒序，估算阅读时间）。`BlogList.vue` 使用 `createContentLoader` 数据，纯静态、无运行时请求。
+- **博客数据**：`data/posts.data.ts` 聚合 `docs/posts/*.md`（过滤 `draft` 与列表页 `posts/index.md`，按 date 倒序，估算阅读时间）。`BlogList.vue` 使用 `createContentLoader` 数据，纯静态、无运行时请求。
 
 ## 已启用的官方 VitePress 能力（config.ts）
 
@@ -109,7 +109,7 @@ npm run typecheck  # vue-tsc 类型检查
 
 ## 如何创建新文章
 
-1. 在 `docs/blog/posts/` 新建 `.md` 文件（文件名即 URL slug，如 `git-rebase.md` → `/blog/posts/git-rebase`）。
+1. 在 `docs/posts/` 新建 `.md` 文件（文件名即 URL slug，如 `git-rebase.md` → `/posts/git-rebase`；线上完整 URL 为 `/blog/posts/git-rebase`，`/blog` 是部署 base 前缀）。
 2. 写 Frontmatter：
    ```yaml
    ---

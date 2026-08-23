@@ -59,6 +59,15 @@ export default defineConfigWithTheme<BlogThemeConfig>({
   sitemap: {
     hostname: SITE.url,
     lastmodDateOnly: true,
+    // VitePress 生成的条目 url 是不含部署 base 的路由路径（如 /posts/git-rebase），
+    // 与含路径段的 hostname（…/blog）拼接时会丢掉 /blog，导致 sitemap 指向 404。
+    // 这里用 SITE.url（origin + base）作前缀把 base 补回每个 url。
+    async transformItems(items) {
+      return items.map((item) => ({
+        ...item,
+        url: `${SITE.url}/${item.url.replace(/^\/+/, '')}`,
+      }))
+    },
   },
 
   head: [
@@ -127,7 +136,7 @@ export default defineConfigWithTheme<BlogThemeConfig>({
     },
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Blog', link: '/blog/' },
+      { text: 'Blog', link: '/posts/' },
     ],
     lastUpdated: { text: '最后更新' },
     // VitePress 官方本地搜索（https://vitepress.dev/reference/default-theme-search）

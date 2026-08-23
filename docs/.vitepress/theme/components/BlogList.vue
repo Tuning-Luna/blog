@@ -5,6 +5,7 @@
  * 过滤通过每篇文章上的 分类/标签 链接触发（URL query ?cat=&tag=&page=），轻量且可分享。
  */
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
+import { withBase } from 'vitepress'
 import { data as posts, type Post } from '../../data/posts.data'
 import { formatDate, yearOf } from '../utils/format'
 
@@ -32,7 +33,9 @@ function syncQuery() {
   if (activeTag.value) q.set('tag', activeTag.value)
   if (page.value > 1) q.set('page', String(page.value))
   const s = q.toString()
-  window.history.replaceState(null, '', s ? `/blog/?${s}` : '/blog/')
+  // history.replaceState 写的是完整 URL，必须带部署 base。
+  const basePath = withBase('/posts/')
+  window.history.replaceState(null, '', s ? `${basePath}?${s}` : basePath)
 }
 
 onMounted(parseQuery)
@@ -135,7 +138,7 @@ function setPage(n: number) {
                 </button>
               </span>
             </div>
-            <a :href="p.url" class="blog-list__item-title">{{ p.title }}</a>
+            <a :href="withBase(p.url)" class="blog-list__item-title">{{ p.title }}</a>
             <p v-if="p.description" class="blog-list__item-desc">
               {{ p.description }}
             </p>
@@ -190,7 +193,7 @@ function setPage(n: number) {
               <time :datetime="p.date" class="blog-list__archive-date">
                 {{ formatDate(p.date) }}
               </time>
-              <a :href="p.url" class="blog-list__archive-link">{{ p.title }}</a>
+              <a :href="withBase(p.url)" class="blog-list__archive-link">{{ p.title }}</a>
             </li>
           </ul>
         </div>

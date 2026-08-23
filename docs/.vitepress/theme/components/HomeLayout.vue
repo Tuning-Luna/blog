@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { withBase } from 'vitepress'
 import { data as posts } from '../../data/posts.data'
 import { profile } from '../../data/profile'
 import { useScrollReveal } from '../composables/useScrollReveal'
@@ -41,7 +42,7 @@ function handleSpotlight(e: MouseEvent) {
           />
           <h1 class="home-hero__name">{{ profile.name }}</h1>
           <div class="home-hero__actions">
-            <M3Button href="/blog/">查看博客</M3Button>
+            <M3Button :href="withBase('/posts/')">查看博客</M3Button>
             <M3Button :href="profile.siteUrl" variant="text">个人主页</M3Button>
             <M3Button :href="profile.githubUrl" variant="text">GitHub</M3Button>
           </div>
@@ -60,7 +61,7 @@ function handleSpotlight(e: MouseEvent) {
           <BlogCard v-for="p in latest" :key="p.url" :post="p" />
         </div>
         <div class="home-more">
-          <M3Button href="/blog/" variant="text">查看全部文章</M3Button>
+          <M3Button :href="withBase('/posts/')" variant="text">查看全部文章</M3Button>
         </div>
       </div>
     </section>

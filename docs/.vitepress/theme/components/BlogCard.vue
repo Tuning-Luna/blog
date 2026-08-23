@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { Post } from '../../data/posts.data'
+import { withBase } from 'vitepress'
 import { formatDate } from '../utils/format'
 import M3Icon from './M3Icon.vue'
 
 withDefaults(defineProps<{ post: Post; big?: boolean }>(), { big: false })
 
 const queryFor = (key: 'cat' | 'tag', value: string) =>
-  `/blog/?${key}=${encodeURIComponent(value)}`
+  `/posts/?${key}=${encodeURIComponent(value)}`
 </script>
 
 <template>
@@ -26,7 +27,7 @@ const queryFor = (key: 'cat' | 'tag', value: string) =>
     </div>
 
     <h3 class="blog-card__title" :class="{ 'blog-card__title--big': big }">
-      <a :href="post.url">{{ post.title }}</a>
+      <a :href="withBase(post.url)">{{ post.title }}</a>
     </h3>
 
     <p v-if="post.description" class="blog-card__desc">{{ post.description }}</p>
@@ -42,7 +43,7 @@ const queryFor = (key: 'cat' | 'tag', value: string) =>
         v-for="c in post.categories"
         :key="c"
         class="blog-card__chip blog-card__chip--category"
-        :href="queryFor('cat', c)"
+        :href="withBase(queryFor('cat', c))"
       >
         {{ c }}
       </a>
@@ -50,7 +51,7 @@ const queryFor = (key: 'cat' | 'tag', value: string) =>
         v-for="t in post.tags"
         :key="t"
         class="blog-card__chip"
-        :href="queryFor('tag', t)"
+        :href="withBase(queryFor('tag', t))"
       >
         #{{ t }}
       </a>

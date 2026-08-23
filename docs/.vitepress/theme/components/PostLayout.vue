@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { Content, useData } from 'vitepress'
+import { Content, useData, withBase } from 'vitepress'
 import { data as posts } from '../../data/posts.data'
 import { formatDate } from '../utils/format'
 import M3Icon from './M3Icon.vue'
@@ -101,7 +101,7 @@ function scrollToTop() {
             v-for="c in categories"
             :key="c"
             class="post-header__category"
-            :href="`/blog/?cat=${encodeURIComponent(c)}`"
+            :href="withBase(`/posts/?cat=${encodeURIComponent(c)}`)"
           >
             {{ c }}
           </a>
@@ -130,7 +130,7 @@ function scrollToTop() {
             v-for="t in tags"
             :key="t"
             class="post-header__tag"
-            :href="`/blog/?tag=${encodeURIComponent(t)}`"
+            :href="withBase(`/posts/?tag=${encodeURIComponent(t)}`)"
           >
             #{{ t }}
           </a>
@@ -143,11 +143,11 @@ function scrollToTop() {
 
       <!-- 前后篇 -->
       <nav v-if="older || newer" class="post-nav" aria-label="文章导航">
-        <a v-if="older" :href="older.url" class="post-nav__card m3-card m3-card--elev1">
+        <a v-if="older" :href="withBase(older.url)" class="post-nav__card m3-card m3-card--elev1">
           <span class="post-nav__label">上一篇</span>
           <span class="post-nav__title">{{ older.title }}</span>
         </a>
-        <a v-if="newer" :href="newer.url" class="post-nav__card m3-card m3-card--elev1 post-nav__card--right">
+        <a v-if="newer" :href="withBase(newer.url)" class="post-nav__card m3-card m3-card--elev1 post-nav__card--right">
           <span class="post-nav__label">下一篇</span>
           <span class="post-nav__title">{{ newer.title }}</span>
         </a>

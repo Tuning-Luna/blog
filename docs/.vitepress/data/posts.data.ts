@@ -2,7 +2,7 @@ import { createContentLoader } from 'vitepress'
 
 /** 博客文章数据模型（对应 posts 的 frontmatter）。 */
 export interface Post {
-  /** 文章链接（/blog/posts/xxx，不含 .html） */
+  /** 文章链接（/posts/xxx，不含 .html，base 由消费方 withBase） */
   url: string
   title: string
   /** ISO 日期字符串（按发布时间倒序） */
@@ -34,12 +34,17 @@ function estimateReadingTime(src: string): number {
   return Math.max(1, minutes)
 }
 
-export default createContentLoader('blog/posts/*.md', {
+export default createContentLoader('posts/*.md', {
   includeSrc: true,
   excerpt: true,
   transform(raw): Post[] {
     return raw
-      .filter((page) => !page.frontmatter.draft)
+      // 排除列表页本身（docs/posts/index.md → /posts/，不是一篇文章）。
+      .filter(
+        (page) =>
+          !page.frontmatter.draft &&
+          page.url.replace(/\.html$/, '') !== '/posts/',
+      )
       .map((page) => ({
         url: page.url.replace(/\.html$/, ''),
         title: page.frontmatter.title || 'Untitled',
