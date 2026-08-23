@@ -158,18 +158,27 @@ function scrollToTop() {
           <span class="post-nav__title">{{ newer.title }}</span>
         </a>
       </nav>
-
-      <button class="back-to-top" type="button" @click="scrollToTop">
-        <M3Icon name="chevronUp" :size="16" /> 回到顶部
-      </button>
     </article>
 
-    <!-- 目录（桌面右侧玻璃栏） -->
+    <!-- 目录（桌面右侧玻璃栏）+ 回到顶部 -->
     <aside v-if="headers.length" class="post-toc" aria-label="目录">
       <nav class="post-toc__panel">
         <span class="post-toc__eyebrow">on this page</span>
         <PostToc :headers="headers" :active-id="activeId" />
       </nav>
+
+      <!-- 回到顶部：随侧栏吸顶，不随正文滚动 -->
+      <M3Button variant="text" class="back-to-top" @click="scrollToTop">
+        <M3Icon name="chevronUp" :size="18" /> 回到顶部
+      </M3Button>
     </aside>
+
+    <!-- 回到顶部：移动端右下角悬浮图标按钮 -->
+    <M3IconButton
+      icon="chevronUp"
+      label="回到顶部"
+      class="back-to-top--float"
+      @click="scrollToTop"
+    />
   </main>
 </template>

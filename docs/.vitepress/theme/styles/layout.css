@@ -117,26 +117,3 @@
   min-width: 0;
 }
 
-/* 回到顶部（文章页用），简单幽灵按钮。 */
-.back-to-top {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--md-sys-spacing-xs);
-  margin-top: var(--md-sys-spacing-2xl);
-  padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-lg);
-  border-radius: var(--md-sys-shape-corner-full);
-  color: var(--md-sys-color-primary);
-  font-family: var(--md-ref-typeface-mono);
-  font-size: var(--md-sys-typescale-label-large-size);
-  transition: background-color var(--md-sys-motion-duration-short2)
-    var(--md-sys-motion-easing-standard);
-}
-
-.back-to-top:hover {
-  background-color: color-mix(
-    in srgb,
-    var(--md-sys-color-primary) 10%,
-    transparent
-  );
-  text-decoration: none;
-}

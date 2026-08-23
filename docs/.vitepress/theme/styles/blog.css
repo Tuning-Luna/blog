@@ -447,15 +447,16 @@
 .post-toc {
   display: none;
   flex: 0 0 240px;
+  flex-direction: column;
+  gap: var(--md-sys-spacing-lg);
   position: sticky;
   top: calc(var(--md-sys-spacing-4xl) + var(--md-sys-spacing-sm));
   max-height: calc(100vh - var(--md-sys-spacing-5xl));
-  overflow-y: auto;
 }
 
 @media (min-width: 1200px) {
   .post-toc {
-    display: block;
+    display: flex;
   }
 }
 
@@ -463,6 +464,9 @@
   display: flex;
   flex-direction: column;
   gap: var(--md-sys-spacing-md);
+  /* 目录过长时面板内部滚动，保持下方「回到顶部」始终可见 */
+  min-height: 0;
+  overflow-y: auto;
   padding: var(--md-sys-spacing-lg);
   border: 1px solid var(--md-glass-border);
   border-radius: var(--md-sys-shape-corner-extra-large);
@@ -474,6 +478,29 @@
   -webkit-backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
   backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
   box-shadow: var(--md-sys-elevation-level1), var(--md-glass-highlight);
+}
+
+/* 回到顶部：桌面在侧栏内（M3 text button，随侧栏吸顶）；移动端右下角悬浮图标按钮 */
+.back-to-top {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  margin-inline-start: var(--md-sys-spacing-lg);
+}
+
+.back-to-top--float {
+  position: fixed;
+  right: var(--md-sys-spacing-xl);
+  bottom: var(--md-sys-spacing-xl);
+  z-index: 40;
+  display: none;
+  background-color: var(--md-sys-color-surface-container-high);
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+@media (max-width: 1199px) {
+  .back-to-top--float {
+    display: inline-flex;
+  }
 }
 
 .post-toc__eyebrow {
