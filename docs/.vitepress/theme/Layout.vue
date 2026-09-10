@@ -28,16 +28,21 @@ const layout = computed(() => {
 
 <template>
   <div class="site-bg" aria-hidden="true" :style="{ '--site-bg-image': siteBgImage }" />
-  <SiteHeader />
-  <HomeLayout v-if="layout === 'home'" />
-  <BlogList v-else-if="layout === 'blog'" />
-  <PostLayout v-else-if="layout === 'post'" />
-  <main v-else class="site-main doc-layout">
-    <div class="container">
-      <div class="vp-doc">
-        <Content />
+  <!-- .site-shell 撑满一屏，.site-main 用 flex:1 吃掉剩余高度：
+       内容不足一屏时页脚也会贴住视口底部（详见 styles/layout.css）。
+       .site-bg 是 position:fixed，不参与这个 flex 布局，所以留在 shell 外面。 -->
+  <div class="site-shell">
+    <SiteHeader />
+    <HomeLayout v-if="layout === 'home'" />
+    <BlogList v-else-if="layout === 'blog'" />
+    <PostLayout v-else-if="layout === 'post'" />
+    <main v-else class="site-main doc-layout">
+      <div class="container">
+        <div class="vp-doc">
+          <Content />
+        </div>
       </div>
-    </div>
-  </main>
-  <SiteFooter />
+    </main>
+    <SiteFooter />
+  </div>
 </template>

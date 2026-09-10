@@ -7,11 +7,24 @@
    .site-bg 负责模糊/缩放/主题蒙层；实际图片 URL（docs/public/JSA-279k.png）由
    Layout.vue 用 useData().site.base 运行时注入，保证 GitHub Pages 的 base 正确。 */
 
-/* 主内容层：浮在 .site-bg（z-index:0）之上。 */
+/* 页面骨架：垂直 flex 列，至少撑满一屏。
+   配合下面 .site-main 的 flex:1，内容不足一屏时页脚会被顶到视口底部，
+   而不是紧跟在内容后面浮在半空。
+   注意：.site-bg 是 position:fixed（脱离文档流），不参与这个 flex 布局，因此留在 shell 之外。 */
+.site-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 主内容层：浮在 .site-bg（z-index:0）之上。
+   flex:1 吃掉 .site-shell 里除顶栏与页脚之外的剩余高度。
+   min-height 仍保留：视口特别矮时给内容一个下限。 */
 .site-main {
   position: relative;
   z-index: 1;
   min-height: 60vh;
+  flex: 1;
 }
 
 /* ---------- AppBar 追加样式 ---------- */
