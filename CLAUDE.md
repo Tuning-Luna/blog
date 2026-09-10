@@ -24,21 +24,25 @@ TuningLuna 的个人博客。基于 **VitePress** 的纯静态站点：本地写
 │   ├── index.md               # 首页（layout: home，正文由 HomeLayout.vue 渲染）
 │   ├── about.md               # 关于（只保留联系方式）
 │   ├── posts/
-│   │   ├── index.md           # 博客列表（/posts/，<BlogList /> 组件）
+│   │   ├── index.md           # 博客列表（layout: blog，正文由 BlogList.vue 渲染）
 │   │   ├── frontend/          # ★ 文章按分类文件夹存放，文件夹名即分类
 │   │   ├── backend/           #   frontend / backend / tools / interview / essay
-│   │   ├── tools/             #   software/ 尚无文章，写第一篇时新建即可
+│   │   ├── tools/             #   software/ 下还有二级 windows / android
 │   │   ├── interview/         #   （见「文章分类」一节）
-│   │   └── essay/
+│   │   ├── essay/
+│   │   └── software/
+│   │       ├── windows/
+│   │       └── android/
 │   ├── public/favicon.svg
+│   ├── public/software/       # 软件推荐文章的截图（按 windows/ android/ 分）
 │   └── .vitepress/
 │       ├── config.ts          # 站点配置（SEO head / 字体 / markdown / themeConfig）
 │       ├── data/posts.data.ts # ★ 文章数据加载器（createContentLoader）
-│       ├── data/categories.ts # ★ 分类注册表（展示名 / 展示顺序）
+│       ├── data/categories.ts # ★ 分类注册表（两级：展示名 / 展示顺序）
 │       ├── data/profile.ts        # 人工维护的个人资料（联系方式、头像等）
 │       └── theme/             # ★ 自定义主题
 │           ├── index.ts       # 注册 Layout + 全局组件 + 导入样式
-│           ├── Layout.vue     # 按 frontmatter.layout 分发 home/post/doc
+│           ├── Layout.vue     # 按 frontmatter.layout 分发 home/blog/post/doc
 │           ├── env.d.ts       # @localSearchIndex 虚拟模块类型声明
 │           ├── components/    # M3 组件（Vue 重写）+ BlogList/BlogSidebar/PostLayout/LocalSearch 等
 │           ├── composables/   # useTheme（三态主题）/ useScrollReveal
@@ -116,33 +120,56 @@ npm run typecheck  # vue-tsc 类型检查
 
 **分类的唯一事实来源是文件夹**：文章放在哪个分类文件夹里，就属于哪个分类。
 frontmatter 里**没有** `categories` 字段（已移除），只有 `tags` 作为细粒度多对多标签。
+分类**最多两级**，二级就是一级文件夹下的子文件夹：
 
-| 文件夹 | 展示名 |
-| --- | --- |
-| `frontend/` | 前端 |
-| `backend/` | 后端 |
-| `tools/` | 工具 |
-| `interview/` | 笔试面试 |
-| `essay/` | 杂谈 |
-| `software/` | 软件推荐 |
+| 一级文件夹 | 展示名 | 二级文件夹 |
+| --- | --- | --- |
+| `frontend/` | 前端 | — |
+| `backend/` | 后端 | — |
+| `tools/` | 工具 | — |
+| `interview/` | 笔试面试 | — |
+| `essay/` | 杂谈 | — |
+| `software/` | 软件推荐 | `windows/`、`android/` |
 
-- 展示名与展示顺序写在 `docs/.vitepress/data/categories.ts` 的 `CATEGORIES` 数组里，**顺序即列表页筛选条的排列顺序**。
-- **新增分类** = 在 `docs/posts/` 下建文件夹 + 在 `CATEGORIES` 里登记一条。漏登记不会导致构建失败：
-  `categoryOf()` 会回退成 slug 本身作展示名（列表页筛选项里会显示英文），补上即可。
-- **文件夹名用 ASCII**（如 `frontend`，不要用「前端」），否则 URL 里会出现百分号编码，
-  分类也会因为 url 被编码而匹配不上。分类名下的子文件夹是允许的
-  （`frontend/vue/xxx.md` 仍归 `frontend`），用于进一步整理，不影响分类归属。
-- 列表页顶部的筛选条只列出**真正有文章**的分类，所以 `software/` 现在不会出现。
+- 展示名与展示顺序写在 `docs/.vitepress/data/categories.ts` 的 `CATEGORIES` 里，
+  **一级数组顺序即筛选面板的排列顺序**；二级写在对应一级的 `children` 里。
+- **新增一级分类** = 建文件夹 + 在 `CATEGORIES` 登记一条；
+  **新增二级分类** = 在一级文件夹下建子文件夹 + 在该一级的 `children` 里登记一条。
+  漏登记不会导致构建失败：`categoryOf()` / `subcategoryOf()` 会回退成 slug 本身作展示名，补上即可。
+- **文件夹名用 ASCII**（如 `frontend`、`windows`，不要用「前端」），否则 URL 里会出现百分号编码，
+  分类也会因为 url 被编码而匹配不上。
+- 筛选面板只列出**真正有文章**的类别与其二级，没有文章的二级不会出现。
+- 三级及更深的子文件夹只归到二级为止（`software/windows/xx/yy.md` 仍算 `software/windows`），
+  多出来的目录仅作整理用。
 
-> ⚠️ 分类是从文章 `url` 的第二段推导的（`posts.data.ts` 的 `folderOf`）——
+### 列表页的查询参数
+
+`/posts/?cat=<一级>&sub=<二级>&tag=<标签>&page=<页码>` —— 可分享，刷新后能恢复：
+
+- `cat` 一级分类；**单独出现时表示「该一级下的全部」**（含其所有二级）。
+- `sub` 二级分类，必须与 `cat` 搭配。
+- 点卡片上的分类芯片只会设置 `cat`；二级只能从右侧筛选面板进入。
+
+### 列表页布局
+
+`posts/index.md` 用 `layout: blog`，由 `Layout.vue` 直接渲染 `<BlogList />`，
+**不经过 `.doc-layout > .container > .vp-doc`**（那条分支会把整页锁死在 760px 并让 Markdown 排版渗进组件）。
+页面本体是「内容列 + ≥1200px 才出现的右侧粘性分类栏」，窄屏退回内容列顶部的折叠面板
+（与文章页 `.post-toc` / `.post-toc-mobile` 同一套做法）；文章卡片用
+`grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr))` 自适应列数。
+
+> ⚠️ 分类是从文章 `url` 的路径段推导的（`posts.data.ts` 的 `pathOf`）——
 > 因为 `createContentLoader` 只给 `url`，页面数据里没有文件路径（`src` 是 Markdown 原文，不是路径）。
 > 这在**没有 `rewrites`** 时等价于文件夹名。**一旦 config.ts 引入 `rewrites`，url 会与文件路径脱钩，
-> 分类推导会静默失效（全部文章变成未分类）**，届时要改成从别处取路径。
+> 一级与二级分类都会静默失效（全部文章变成未分类）**，届时要改成从别处取路径。
 
 ## 如何创建新文章
 
-1. 在对应分类文件夹里新建 `.md` 文件，例如 `docs/posts/tools/git-rebase.md`。
+1. 在对应分类文件夹里新建 `.md` 文件，例如 `docs/posts/tools/git-rebase.md`；
+   要归二级分类就再往下一层，例如 `docs/posts/software/windows/bitwarden.md`。
    文件名即 URL slug，线上完整 URL 为 `/blog/posts/<分类文件夹>/<文件名>`（`/blog` 是部署 base 前缀）。
+   文章里引用图片放 `docs/public/software/<二级>/`，正文按 `/software/<二级>/xxx.png` 引用
+   （Markdown 图片语法会自动带上部署 base；**不要**用原始 `<img src="/...">`，那种不会被加 base）。
 2. 写 Frontmatter：
    ```yaml
    ---

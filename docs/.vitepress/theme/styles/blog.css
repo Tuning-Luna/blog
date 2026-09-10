@@ -11,7 +11,7 @@
 
 .blog-list__container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1280px;
   margin-inline: auto;
   padding-inline: var(--md-sys-spacing-xl);
 }
@@ -19,6 +19,98 @@
 @media (min-width: 720px) {
   .blog-list__container {
     padding-inline: var(--md-sys-spacing-2xl);
+  }
+}
+
+/* 内容列 + 右侧粘性分类栏。
+   分类栏只在 ≥1200px 出现，窄屏改用内容列顶部的 .blog-filter-mobile 折叠面板
+   —— 与文章页「桌面 .post-toc / 移动 .post-toc-mobile」完全同一套双位置做法。 */
+
+.blog-list__layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--md-sys-spacing-3xl);
+}
+
+.blog-list__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.blog-list__rail {
+  display: none;
+  flex: 0 0 240px;
+  flex-direction: column;
+  position: sticky;
+  /* 与 .post-toc 一字不差：避开 64px 粘性顶栏，两页导轨纵向对齐 */
+  top: calc(var(--md-sys-spacing-4xl) + var(--md-sys-spacing-sm));
+  max-height: calc(100vh - var(--md-sys-spacing-5xl));
+}
+
+@media (min-width: 1200px) {
+  .blog-list__rail {
+    display: flex;
+  }
+}
+
+/* 侧栏玻璃面板（AGENT-GUIDE §12.3「侧栏大面板」= surface-container-low + extra-large + elev1）。
+   注意：这里不能加 .spotlight、也不能在它上面做 transform 动画 —— 两者都会破坏 sticky。 */
+.blog-list__rail-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-sys-spacing-md);
+  /* 分类树过长时面板内部滚动，不把页面撑高 */
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--md-sys-spacing-lg);
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-low) calc(var(--md-glass-opacity) * 100%),
+    transparent
+  );
+  -webkit-backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  border: 1px solid var(--md-glass-border);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  box-shadow: var(--md-sys-elevation-level1), var(--md-glass-highlight);
+}
+
+.blog-list__rail-eyebrow {
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-label-small-size);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--md-sys-color-primary);
+}
+
+/* 窄屏分类折叠面板（≥1200px 由右侧栏接管） */
+.blog-filter-mobile {
+  margin-bottom: var(--md-sys-spacing-lg);
+  border: 1px solid var(--md-glass-border);
+  border-radius: var(--md-sys-shape-corner-medium);
+  background-color: color-mix(
+    in srgb,
+    var(--md-sys-color-surface-container-low) calc(var(--md-glass-opacity) * 100%),
+    transparent
+  );
+  -webkit-backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+  backdrop-filter: blur(var(--md-glass-blur)) saturate(var(--md-glass-saturate));
+}
+
+.blog-filter-mobile__summary {
+  padding: var(--md-sys-spacing-md) var(--md-sys-spacing-lg);
+  cursor: pointer;
+  font-family: var(--md-ref-typeface-mono);
+  color: var(--md-sys-color-primary);
+}
+
+.blog-filter-mobile .blog-cat-filter__list {
+  padding: 0 var(--md-sys-spacing-lg) var(--md-sys-spacing-lg);
+}
+
+@media (min-width: 1200px) {
+  .blog-filter-mobile {
+    display: none;
   }
 }
 
@@ -46,48 +138,71 @@
   margin: 0;
 }
 
-/* ---------- 分类筛选条（BlogCategoryFilter） ---------- */
-/* 用 wrap 而不是横滚：分类多时换行，页面本身永远不会横向滚动。 */
+/* ---------- 分类筛选面板（BlogCategoryFilter） ----------
+   纵向树，渲染在两个位置：宽屏的右侧玻璃栏 / 窄屏的顶部折叠面板。
+   行本身刻意**不用玻璃** —— 两个容器都已经是玻璃面板，嵌套玻璃是禁止的（AGENT-GUIDE §13.1）。
+   视觉沿用站内既有的「导航行」惯例（同 .appbar__link）。 */
 
-.blog-cat-filter {
+.blog-cat-filter__list,
+.blog-cat-filter__sublist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--md-sys-spacing-sm);
-  margin-bottom: var(--md-sys-spacing-lg);
+  flex-direction: column;
+  gap: var(--md-sys-spacing-xs);
+}
+
+/* 二级缩进，同 .toc-list .toc-list */
+.blog-cat-filter__sublist {
+  margin-top: var(--md-sys-spacing-xs);
+  margin-inline-start: var(--md-sys-spacing-md);
 }
 
 .blog-cat-filter__item {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--md-sys-spacing-xs);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--md-sys-spacing-sm);
+  width: 100%;
   padding: var(--md-sys-spacing-xs) var(--md-sys-spacing-md);
-  border: 1px solid var(--md-glass-border);
+  border: none;
   border-radius: var(--md-sys-shape-corner-full);
   background-color: transparent;
-  font-family: var(--md-ref-typeface-mono);
-  font-size: var(--md-sys-typescale-label-medium-size);
   color: var(--md-sys-color-on-surface-variant);
+  font-family: var(--md-ref-typeface);
+  font-size: var(--md-sys-typescale-label-large-size);
+  text-align: start;
   cursor: pointer;
-  white-space: nowrap;
   transition:
     color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
-    border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
     background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
 }
 
 .blog-cat-filter__item:hover {
-  color: var(--md-sys-color-primary);
-  border-color: var(--md-sys-color-primary);
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
 }
 
+/* 当前生效的那个筛选 */
 .blog-cat-filter__item.is-active {
-  background-color: var(--md-sys-color-primary);
-  border-color: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
+  background-color: color-mix(in srgb, var(--md-sys-color-primary) 12%, transparent);
+  color: var(--md-sys-color-primary);
 }
 
-/* 篇数：比标签略小；颜色继承所在项，选中时随 on-primary 一起反色。 */
+/* 二级生效时，一级只标为祖先（更轻），避免两行看起来都像「已选中」 */
+.blog-cat-filter__item.is-current {
+  color: var(--md-sys-color-primary);
+}
+
+.blog-cat-filter__label {
+  overflow-wrap: anywhere;
+}
+
+/* 篇数：比标签略小，颜色继承所在行（选中时一起变 primary） */
 .blog-cat-filter__count {
+  flex: 0 0 auto;
+  font-family: var(--md-ref-typeface-mono);
   font-size: var(--md-sys-typescale-label-small-size);
   color: inherit;
 }
@@ -140,15 +255,18 @@
   );
 }
 
-/* ---------- 文章列表（全宽玻璃行） ---------- */
+/* ---------- 文章列表（自适应多列玻璃卡片） ----------
+   auto-fill + minmax 让**列数由内容列自身宽度**决定，而不是视口宽度 ——
+   这样有侧栏时也不会出现「按视口断点排版就错位」（AGENT-GUIDE §3.8 / §15.15）。 */
 
 .blog-list__items {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
   gap: var(--md-sys-spacing-md);
+  align-items: stretch;
 }
 
 .blog-list__item {
@@ -295,73 +413,6 @@
 .blog-list__page-info {
   font-family: var(--md-ref-typeface-mono);
   color: var(--md-sys-color-on-surface-variant);
-}
-
-/* ---------- 归档 ---------- */
-
-.blog-list__archive {
-  margin-top: var(--md-sys-spacing-3xl);
-  padding-top: var(--md-sys-spacing-xl);
-  border-top: 1px solid var(--md-glass-border);
-}
-
-.blog-list__archive-title {
-  font-family: var(--md-ref-typeface-display);
-  font-size: var(--md-sys-typescale-title-large-size);
-  color: var(--md-sys-color-on-surface);
-  margin-bottom: var(--md-sys-spacing-lg);
-}
-
-.blog-list__year {
-  margin-bottom: var(--md-sys-spacing-lg);
-}
-
-.blog-list__year-title {
-  display: flex;
-  align-items: baseline;
-  gap: var(--md-sys-spacing-sm);
-  font-family: var(--md-ref-typeface-mono);
-  font-size: var(--md-sys-typescale-label-large-size);
-  color: var(--md-sys-color-on-surface-variant);
-  margin-bottom: var(--md-sys-spacing-sm);
-}
-
-.blog-list__year-count {
-  font-family: var(--md-ref-typeface-mono);
-  font-size: var(--md-sys-typescale-label-small-size);
-}
-
-.blog-list__archive-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.blog-list__archive-item {
-  display: flex;
-  align-items: baseline;
-  gap: var(--md-sys-spacing-md);
-  padding-block: var(--md-sys-spacing-xs);
-  border-bottom: 1px solid var(--md-glass-border);
-}
-
-.blog-list__archive-date {
-  flex: 0 0 auto;
-  font-family: var(--md-ref-typeface-mono);
-  font-size: var(--md-sys-typescale-label-medium-size);
-  color: var(--md-sys-color-on-surface-variant);
-}
-
-.blog-list__archive-link {
-  color: var(--md-sys-color-on-surface);
-  text-decoration: none;
-}
-
-.blog-list__archive-link:hover {
-  color: var(--md-sys-color-primary);
-  text-decoration: none;
 }
 
 /* ---------- 文章卡 ---------- */

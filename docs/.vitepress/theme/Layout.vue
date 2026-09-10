@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Content, useData } from 'vitepress'
+import BlogList from './components/BlogList.vue'
 import HomeLayout from './components/HomeLayout.vue'
 import PostLayout from './components/PostLayout.vue'
 import SiteFooter from './components/SiteFooter.vue'
@@ -13,9 +14,10 @@ const { frontmatter, page, site } = useData()
 const siteBgImage = `url(${site.value.base}JSA-279k.png)`
 
 // 页面布局优先级：
-//   1. frontmatter.layout 显式指定（home → 个人主页；post → 文章页）
+//   1. frontmatter.layout 显式指定（home → 个人主页；blog → 博客列表；post → 文章页）
 //   2. 自动识别博客文章路径（posts/*.md）→ 文章页（无需写 layout: post）
 //   3. 其余 → 通用文档页
+// 列表页必须显式写 layout: blog，否则会被第 2 条判成文章页。
 const layout = computed(() => {
   const fm = frontmatter.value.layout
   if (fm) return fm
@@ -28,6 +30,7 @@ const layout = computed(() => {
   <div class="site-bg" aria-hidden="true" :style="{ '--site-bg-image': siteBgImage }" />
   <SiteHeader />
   <HomeLayout v-if="layout === 'home'" />
+  <BlogList v-else-if="layout === 'blog'" />
   <PostLayout v-else-if="layout === 'post'" />
   <main v-else class="site-main doc-layout">
     <div class="container">
