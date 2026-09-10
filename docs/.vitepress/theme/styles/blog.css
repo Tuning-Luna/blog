@@ -39,12 +39,23 @@
 
 .blog-list__rail {
   display: none;
-  flex: 0 0 240px;
+  /* 280px：比文章页 .post-toc 的 240px 宽一档。
+     分类面板与文章卡片同属「玻璃面板」族（AGENT-GUIDE §5.1：surface-container-low 是
+     卡片、侧栏、行的共同底色），系统靠**尺寸/圆角/阴影**而不是颜色来拉开层级——
+     面板 extra-large(28) + elev1 + 玻璃高光 vs 列表行 medium(12) + 无阴影（§8 / §9 / §12.3）。
+     所以这里加宽是在放大那条既有的层级差，而不是另造一套配色。 */
+  flex: 0 0 280px;
   flex-direction: column;
+  /* 分类树比可用高度短时垂直居中，落在右侧留白的中部而不是贴着顶栏。
+     高度必须是**定值**（下面的 height）：rail 若沿用自己的内容高度就没有剩余空间可分配，
+     justify-content 不会有任何效果。
+     比可用高度长时，面板会收缩并在内部滚动（min-height:0 + overflow-y:auto），
+     此时没有剩余空间，居中自然失效——不会把顶部内容顶出可视区。 */
+  justify-content: center;
   position: sticky;
-  /* 与 .post-toc 一字不差：避开 64px 粘性顶栏，两页导轨纵向对齐 */
+  /* 与 .post-toc 相同的顶部偏移：避开 64px 粘性顶栏 */
   top: calc(var(--md-sys-spacing-4xl) + var(--md-sys-spacing-sm));
-  max-height: calc(100vh - var(--md-sys-spacing-5xl));
+  height: calc(100vh - var(--md-sys-spacing-5xl));
 }
 
 @media (min-width: 1200px) {
@@ -165,7 +176,9 @@
   justify-content: space-between;
   gap: var(--md-sys-spacing-sm);
   width: 100%;
-  padding: var(--md-sys-spacing-xs) var(--md-sys-spacing-md);
+  /* 纵向 sm：对齐 design-system 的导航行规格（AppBar.css 的 .appbar__link 是 padding: sm md），
+     比原来的 xs 更厚实，也让整个面板更高、更像侧栏而不是一张卡片。 */
+  padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-md);
   border: none;
   border-radius: var(--md-sys-shape-corner-full);
   background-color: transparent;

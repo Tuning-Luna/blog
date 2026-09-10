@@ -165,25 +165,20 @@ frontmatter 里**没有** `categories` 字段（已移除），只有 `tags` 作
 
 ## 如何创建新文章
 
-1. 在对应分类文件夹里新建 `.md` 文件，例如 `docs/posts/tools/git-rebase.md`；
-   要归二级分类就再往下一层，例如 `docs/posts/software/windows/bitwarden.md`。
-   文件名即 URL slug，线上完整 URL 为 `/blog/posts/<分类文件夹>/<文件名>`（`/blog` 是部署 base 前缀）。
-   文章里引用图片放 `docs/public/software/<二级>/`，正文按 `/software/<二级>/xxx.png` 引用
-   （Markdown 图片语法会自动带上部署 base；**不要**用原始 `<img src="/...">`，那种不会被加 base）。
-2. 写 Frontmatter：
-   ```yaml
-   ---
-   title: 文章标题
-   date: 2026-08-22
-   description: 一句话摘要（博客卡片/文章页副标题）
-   tags: [Git, 编程]
-   featured: false   # true 时作为精选卡展示在博客首页顶部
-   draft: false      # true 时不进入博客列表（但页面仍会构建）
-   ---
-   ```
+> **面向作者的完整写作说明在 `WRITING.md`**（frontmatter 各字段、图片存放与引用、标签约定、
+> 常见错误速查）。本节只保留**改代码时必须知道的硬性约束**，避免两处各写一份格式说明而漂移。
+
+1. 文章放 `docs/posts/<一级>/[<二级>/]<文件名>.md`，文件名即 URL slug（ASCII、kebab-case）。
+   线上完整 URL 为 `/blog/posts/<路径>/<文件名>`（`/blog` 是部署 base 前缀）。
+2. frontmatter 只写 `title` / `date` / `description` / `tags` / `draft`。
+   **不要再加 `categories`** —— 分类已改由文件夹决定，该字段从全仓移除，写了也无效。
+   （`featured` 字段仍在类型里，但**没有任何组件消费它**，首页「最新」是按日期取 6 篇。）
 3. **正文不要写顶部的 `# 标题`**（文章页 h1 由 `PostLayout` 从 frontmatter.title 渲染，写了会重复）。
-4. 正文以介绍段开头；需要「摘要截断」时用 `<!-- more -->`（`page.excerpt` 会取它之前的内容）。
-5. 本地 `npm run dev` 预览 → 满意后 `git push` 即可自动部署。
+4. 图片放 `docs/public/<与文章相同的路径>/`，正文用 **Markdown 图片语法**
+   （`![alt](/路径/文件名-1.png)`）引用 —— 只有 Markdown 语法会被自动加上部署 base；
+   原始 `<img src="/...">` 不在 VitePress 的 base 改写覆盖范围内。
+5. 文件名不要叫 `index.md`（会被当成目录落地页排除在列表外）。
+6. 本地 `npm run dev` 预览 → 满意后 `git push` 即可自动部署。
 
 ## 部署（GitHub Pages）
 
