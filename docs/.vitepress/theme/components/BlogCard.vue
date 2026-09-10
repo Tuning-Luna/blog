@@ -40,12 +40,11 @@ const queryFor = (key: 'cat' | 'tag', value: string) =>
 
     <div class="blog-card__chips">
       <a
-        v-for="c in post.categories"
-        :key="c"
+        v-if="post.category"
         class="blog-card__chip blog-card__chip--category"
-        :href="withBase(queryFor('cat', c))"
+        :href="withBase(queryFor('cat', post.category.slug))"
       >
-        {{ c }}
+        {{ post.category.label }}
       </a>
       <a
         v-for="t in post.tags"

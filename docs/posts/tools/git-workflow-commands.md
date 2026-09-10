@@ -4,8 +4,6 @@ date: 2025-09-17
 description: 高频 Git 命令速查：暂存、回滚、改历史、协作。
 tags:
   - Git
-categories:
-  - Git
 ---
 
 平时不用查手册的 Git 命令清单，按场景分类，附上最常用的选项。

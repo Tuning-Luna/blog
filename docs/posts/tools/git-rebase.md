@@ -5,8 +5,6 @@ description: 深入理解 Git Rebase 的工作原理、适用场景与风险，�
 tags:
   - Git
   - 编程
-categories:
-  - 技术
 featured: true
 ---
 

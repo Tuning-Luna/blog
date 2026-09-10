@@ -15,17 +15,19 @@ const rawDate = computed(() =>
 )
 const dateText = computed(() => formatDate(rawDate.value))
 const tags = computed<string[]>(() => frontmatter.value.tags ?? [])
-const categories = computed<string[]>(() => frontmatter.value.categories ?? [])
 const lastUpdated = computed(() => {
   const ts = page.value.lastUpdated
   if (!ts) return ''
   return formatDate(new Date(ts).toISOString())
 })
 
-// 从文章数据源匹配当前文章（阅读时间 / 前后篇）
+// 从文章数据源匹配当前文章（阅读时间 / 分类 / 前后篇）
 const current = computed(() =>
   posts.find((p) => p.url === `/${page.value.relativePath.replace(/\.md$/, '')}`),
 )
+
+// 分类由所在文件夹推导（见 data/categories.ts），不写在 frontmatter 里。
+const category = computed(() => current.value?.category ?? null)
 
 const older = computed(() => {
   const i = posts.findIndex((p) => p.url === current.value?.url)
@@ -102,14 +104,12 @@ function scrollToTop() {
       </M3Button>
 
       <header class="post-header">
-        <div v-if="categories.length" class="post-header__categories">
+        <div v-if="category" class="post-header__categories">
           <a
-            v-for="c in categories"
-            :key="c"
             class="post-header__category"
-            :href="withBase(`/posts/?cat=${encodeURIComponent(c)}`)"
+            :href="withBase(`/posts/?cat=${encodeURIComponent(category.slug)}`)"
           >
-            {{ c }}
+            {{ category.label }}
           </a>
         </div>
 

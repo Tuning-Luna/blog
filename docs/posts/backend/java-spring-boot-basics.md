@@ -5,8 +5,6 @@ description: 用最小步骤理解 Spring Boot 的自动配置与启动流程。
 tags:
   - Java
   - Spring Boot
-categories:
-  - Java后端
 ---
 
 Spring Boot 最大的价值是「约定优于配置」：一个 main 方法就能把整个应用跑起来。这篇文章用最小例子拆解它到底做了什么。

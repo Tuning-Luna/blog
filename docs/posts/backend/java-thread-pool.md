@@ -5,8 +5,6 @@ description: 七个核心参数、拒绝策略，以及为什么不要用 Execut
 tags:
   - Java
   - 并发
-categories:
-  - Java后端
 ---
 
 线程池是 Java 并发编程里最容易用错也最影响性能的组件。搞懂 `ThreadPoolExecutor` 的七个参数，才能写出可控的并发代码。

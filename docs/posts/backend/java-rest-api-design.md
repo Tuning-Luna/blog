@@ -6,8 +6,6 @@ tags:
   - Java
   - Spring Boot
   - REST
-categories:
-  - Java后端
 ---
 
 REST API 的「设计」不只是 URL 长什么样，还包括响应结构、错误处理与版本化。

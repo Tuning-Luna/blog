@@ -5,8 +5,6 @@ description: ref/reactive 的机制差异，以及写组件时的选型建议。
 tags:
   - Vue
   - 前端
-categories:
-  - 前端
 ---
 
 `ref` 和 `reactive` 是 Vue 3 里两个最基础的响应式 API。用错的话会在解构、替换、嵌套时踩坑。

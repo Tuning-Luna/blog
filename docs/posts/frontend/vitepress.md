@@ -6,8 +6,6 @@ tags:
   - VitePress
   - Vue
   - 前端
-categories:
-  - 技术
 ---
 
 VitePress 默认主题功能完整，但如果你需要的是「长得完全不一样」的站点，自定义主题反而更直接。本文记录把一套现成的 MD3 × Glassmorphism 设计系统接入 VitePress 的关键步骤。

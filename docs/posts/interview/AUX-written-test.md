@@ -6,8 +6,6 @@ tags:
   - Java
   - 后端
   - 笔试
-categories:
-  - 笔试
 ---
 
 

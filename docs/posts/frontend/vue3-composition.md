@@ -5,8 +5,6 @@ description: Composition API 不是银弹。本文梳理它解决什么问题，
 tags:
   - Vue
   - 前端
-categories:
-  - 前端
 ---
 
 Composition API 出来快五年了，社区对它已经从「新特性」变成「默认选项」。但「默认」不等于「总是更好」。这篇文章聊聊真正的取舍。

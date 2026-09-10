@@ -5,8 +5,6 @@ description: SecurityFilterChain、认证过滤器链与常见配置模式。
 tags:
   - Java
   - Spring Security
-categories:
-  - Java后端
 ---
 
 Spring Security 通过一条过滤器链实现认证与授权。理解这条链，就理解了它的所有配置。

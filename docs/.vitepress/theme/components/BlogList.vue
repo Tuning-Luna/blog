@@ -1,13 +1,17 @@
 <script setup lang="ts">
 /**
  * 博客列表页 —— 遵循 VitePress 官方 createContentLoader 模式（guide/data-loading）：
- * 一个干净的按日期倒序的文章列表，不引入侧栏/复杂筛选 UI。
- * 过滤通过每篇文章上的 分类/标签 链接触发（URL query ?cat=&tag=&page=），轻量且可分享。
+ * 一个干净的按日期倒序的文章列表。
+ * 过滤状态存在 URL query（?cat=&tag=&page=）里，可分享、可直接刷新恢复：
+ *   - cat 是按文件夹推导出的分类（见 data/categories.ts），由顶部筛选条与卡片芯片触发；
+ *   - tag 是 frontmatter 的细粒度标签，只能点卡片上的标签触发。
  */
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import { withBase } from 'vitepress'
+import { CATEGORIES, categoryOf, type CategoryFacet } from '../../data/categories'
 import { data as posts, type Post } from '../../data/posts.data'
 import { formatDate, yearOf } from '../utils/format'
+import BlogCategoryFilter from './BlogCategoryFilter.vue'
 
 const PER_PAGE = 8
 
@@ -45,10 +49,34 @@ watch([activeCategory, activeTag, page], syncQuery)
 
 const isFiltered = computed(() => !!(activeCategory.value || activeTag.value))
 
+/* 状态条上显示中文分类名；若 URL 里被人为改成未知 slug，就退回显示 slug 本身。 */
+const activeCategoryLabel = computed(
+  () => categoryOf(activeCategory.value)?.label ?? '',
+)
+
+/* 分类筛选项：只列出真正有文章的类别（所以尚未开写的「软件推荐」不会出现）。
+   顺序取 CATEGORIES 的登记顺序；存在但未登记的文件夹按名称追加在后，展示名回退为 slug。 */
+const categoryFacets = computed<CategoryFacet[]>(() => {
+  const counts = new Map<string, number>()
+  for (const p of posts) {
+    const slug = p.category?.slug
+    if (slug) counts.set(slug, (counts.get(slug) ?? 0) + 1)
+  }
+  const registered = CATEGORIES.filter((c) => counts.has(c.slug))
+  const unregistered = [...counts.keys()]
+    .filter((slug) => !CATEGORIES.some((c) => c.slug === slug))
+    .sort()
+    .map((slug) => ({ slug, label: slug }))
+  return [...registered, ...unregistered].map((c) => ({
+    ...c,
+    count: counts.get(c.slug)!,
+  }))
+})
+
 const filtered = computed(() =>
   posts.filter(
     (p) =>
-      (!activeCategory.value || p.categories.includes(activeCategory.value)) &&
+      (!activeCategory.value || p.category?.slug === activeCategory.value) &&
       (!activeTag.value || p.tags.includes(activeTag.value)),
   ),
 )
@@ -77,8 +105,9 @@ const archive = computed(() => {
   return [...years.entries()].sort((a, b) => +b[0] - +a[0])
 })
 
-function filterCategory(name: string) {
-  activeCategory.value = activeCategory.value === name ? null : name
+/** 点分类：已是当前分类则取消；slug 为 null 表示「全部」。 */
+function filterCategory(slug: string | null) {
+  activeCategory.value = activeCategory.value === slug ? null : slug
   page.value = 1
 }
 
@@ -107,10 +136,18 @@ function setPage(n: number) {
         <h1 class="blog-list__title">Blog</h1>
       </header>
 
+      <!-- 分类筛选条 -->
+      <BlogCategoryFilter
+        :facets="categoryFacets"
+        :active="activeCategory"
+        :total="posts.length"
+        @select="filterCategory"
+      />
+
       <!-- 筛选状态条（仅筛选时显示） -->
       <div v-if="isFiltered" class="blog-list__filterbar" role="status">
         <span class="blog-list__filterbar-text">
-          {{ activeCategory ? `分类：${activeCategory}` : '' }}
+          {{ activeCategory ? `分类：${activeCategoryLabel}` : '' }}
           {{ activeTag ? `标签：${activeTag}` : '' }}
           · 共 {{ filtered.length }} 篇
         </span>
@@ -127,14 +164,14 @@ function setPage(n: number) {
               <time :datetime="p.date" class="blog-list__date">
                 {{ formatDate(p.date) }}
               </time>
-              <span v-if="p.categories.length" class="blog-list__category">
+              <span v-if="p.category" class="blog-list__category">
                 <button
                   type="button"
                   class="blog-list__link blog-list__link--category"
-                  :class="{ 'is-active': activeCategory === p.categories[0] }"
-                  @click="filterCategory(p.categories[0])"
+                  :class="{ 'is-active': activeCategory === p.category.slug }"
+                  @click="filterCategory(p.category.slug)"
                 >
-                  {{ p.categories[0] }}
+                  {{ p.category.label }}
                 </button>
               </span>
             </div>

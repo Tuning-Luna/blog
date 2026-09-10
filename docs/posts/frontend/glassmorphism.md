@@ -5,8 +5,6 @@ description: 毛玻璃效果的核心不是 backdrop-filter 本身，而是背�
 tags:
   - CSS
   - 设计
-categories:
-  - 前端
 ---
 
 毛玻璃（Glassmorphism）这几年很流行，但大量实现犯了同一个错误：把 `backdrop-filter` 加在一个纯色背景上——结果玻璃什么都模糊不到，只是个半透明灰块。

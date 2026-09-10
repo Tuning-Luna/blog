@@ -46,6 +46,52 @@
   margin: 0;
 }
 
+/* ---------- 分类筛选条（BlogCategoryFilter） ---------- */
+/* 用 wrap 而不是横滚：分类多时换行，页面本身永远不会横向滚动。 */
+
+.blog-cat-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--md-sys-spacing-sm);
+  margin-bottom: var(--md-sys-spacing-lg);
+}
+
+.blog-cat-filter__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--md-sys-spacing-xs);
+  padding: var(--md-sys-spacing-xs) var(--md-sys-spacing-md);
+  border: 1px solid var(--md-glass-border);
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: transparent;
+  font-family: var(--md-ref-typeface-mono);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.blog-cat-filter__item:hover {
+  color: var(--md-sys-color-primary);
+  border-color: var(--md-sys-color-primary);
+}
+
+.blog-cat-filter__item.is-active {
+  background-color: var(--md-sys-color-primary);
+  border-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
+
+/* 篇数：比标签略小；颜色继承所在项，选中时随 on-primary 一起反色。 */
+.blog-cat-filter__count {
+  font-size: var(--md-sys-typescale-label-small-size);
+  color: inherit;
+}
+
 /* ---------- 筛选状态条 ---------- */
 
 .blog-list__filterbar {

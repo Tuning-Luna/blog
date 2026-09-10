@@ -5,8 +5,6 @@ description: 什么时候用 Flexbox、什么时候用 Grid，以及容器查询
 tags:
   - CSS
   - 前端
-categories:
-  - 前端
 ---
 
 Flexbox 和 Grid 不是「二选一」，而是各有主场的两种布局工具。搞清分工，能少写很多 hack。

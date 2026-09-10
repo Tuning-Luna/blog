@@ -25,11 +25,16 @@ TuningLuna 的个人博客。基于 **VitePress** 的纯静态站点：本地写
 │   ├── about.md               # 关于（只保留联系方式）
 │   ├── posts/
 │   │   ├── index.md           # 博客列表（/posts/，<BlogList /> 组件）
-│   │   └── *.md               # ★ 文章统一放这里（.md，文件名即 URL slug）
+│   │   ├── frontend/          # ★ 文章按分类文件夹存放，文件夹名即分类
+│   │   ├── backend/           #   frontend / backend / tools / interview / essay
+│   │   ├── tools/             #   software/ 尚无文章，写第一篇时新建即可
+│   │   ├── interview/         #   （见「文章分类」一节）
+│   │   └── essay/
 │   ├── public/favicon.svg
 │   └── .vitepress/
 │       ├── config.ts          # 站点配置（SEO head / 字体 / markdown / themeConfig）
 │       ├── data/posts.data.ts # ★ 文章数据加载器（createContentLoader）
+│       ├── data/categories.ts # ★ 分类注册表（展示名 / 展示顺序）
 │       ├── data/profile.ts        # 人工维护的个人资料（联系方式、头像等）
 │       └── theme/             # ★ 自定义主题
 │           ├── index.ts       # 注册 Layout + 全局组件 + 导入样式
@@ -107,9 +112,37 @@ npm run typecheck  # vue-tsc 类型检查
 - **标题去重**：`titleTemplate: true`（首页标题与站名相同自动去重）。
 - **导航**：Home / Blog（About 已删除，其内容即首页的联系区）。
 
+## 文章分类
+
+**分类的唯一事实来源是文件夹**：文章放在哪个分类文件夹里，就属于哪个分类。
+frontmatter 里**没有** `categories` 字段（已移除），只有 `tags` 作为细粒度多对多标签。
+
+| 文件夹 | 展示名 |
+| --- | --- |
+| `frontend/` | 前端 |
+| `backend/` | 后端 |
+| `tools/` | 工具 |
+| `interview/` | 笔试面试 |
+| `essay/` | 杂谈 |
+| `software/` | 软件推荐 |
+
+- 展示名与展示顺序写在 `docs/.vitepress/data/categories.ts` 的 `CATEGORIES` 数组里，**顺序即列表页筛选条的排列顺序**。
+- **新增分类** = 在 `docs/posts/` 下建文件夹 + 在 `CATEGORIES` 里登记一条。漏登记不会导致构建失败：
+  `categoryOf()` 会回退成 slug 本身作展示名（列表页筛选项里会显示英文），补上即可。
+- **文件夹名用 ASCII**（如 `frontend`，不要用「前端」），否则 URL 里会出现百分号编码，
+  分类也会因为 url 被编码而匹配不上。分类名下的子文件夹是允许的
+  （`frontend/vue/xxx.md` 仍归 `frontend`），用于进一步整理，不影响分类归属。
+- 列表页顶部的筛选条只列出**真正有文章**的分类，所以 `software/` 现在不会出现。
+
+> ⚠️ 分类是从文章 `url` 的第二段推导的（`posts.data.ts` 的 `folderOf`）——
+> 因为 `createContentLoader` 只给 `url`，页面数据里没有文件路径（`src` 是 Markdown 原文，不是路径）。
+> 这在**没有 `rewrites`** 时等价于文件夹名。**一旦 config.ts 引入 `rewrites`，url 会与文件路径脱钩，
+> 分类推导会静默失效（全部文章变成未分类）**，届时要改成从别处取路径。
+
 ## 如何创建新文章
 
-1. 在 `docs/posts/` 新建 `.md` 文件（文件名即 URL slug，如 `git-rebase.md` → `/posts/git-rebase`；线上完整 URL 为 `/blog/posts/git-rebase`，`/blog` 是部署 base 前缀）。
+1. 在对应分类文件夹里新建 `.md` 文件，例如 `docs/posts/tools/git-rebase.md`。
+   文件名即 URL slug，线上完整 URL 为 `/blog/posts/<分类文件夹>/<文件名>`（`/blog` 是部署 base 前缀）。
 2. 写 Frontmatter：
    ```yaml
    ---
@@ -117,7 +150,6 @@ npm run typecheck  # vue-tsc 类型检查
    date: 2026-08-22
    description: 一句话摘要（博客卡片/文章页副标题）
    tags: [Git, 编程]
-   categories: [技术]
    featured: false   # true 时作为精选卡展示在博客首页顶部
    draft: false      # true 时不进入博客列表（但页面仍会构建）
    ---

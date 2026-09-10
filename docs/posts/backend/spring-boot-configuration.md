@@ -5,8 +5,6 @@ description: 理顺 Spring Boot 外部化配置的优先级，并用 @Configurat
 tags:
   - Java
   - Spring Boot
-categories:
-  - Java后端
 ---
 
 同一个应用，开发环境和生产环境的配置往往不同。Spring Boot 的「外部化配置」让你可以在不碰代码的前提下覆盖配置——关键是理解它的优先级顺序。
