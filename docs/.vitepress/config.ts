@@ -1,4 +1,14 @@
-import { defineConfigWithTheme } from 'vitepress'
+import { writeFileSync } from 'node:fs'
+import path from 'node:path'
+import { createContentLoader, defineConfigWithTheme } from 'vitepress'
+import { buildFeed } from './data/feed'
+import {
+  POSTS_GLOB,
+  POSTS_LOADER_OPTIONS,
+  navFor,
+  transformPosts,
+  type Post,
+} from './data/posts-core'
 
 /** 自定义主题的 themeConfig 结构（与 theme 组件消费的字段一致）。 */
 interface BlogThemeConfig {
@@ -31,6 +41,9 @@ const SITE = {
   url: 'https://tuning-luna.github.io/blog',
 }
 
+/** 首页「最新文章」展示几篇（由 transformPageData 注入，HomeLayout 只管渲染）。 */
+const HOME_LATEST_COUNT = 6
+
 /** 从环境变量解析 base：本地为 /，CI 注入 /<repo>/；用户页（<user>.github.io）回退 /。 */
 function resolveBase(): string {
   const b = process.env.BASE_URL
@@ -42,6 +55,30 @@ function resolveBase(): string {
 }
 
 const base = resolveBase()
+
+/**
+ * 页面在**生产站点**上的绝对地址（供 canonical / og:url 使用）。
+ * 永远用 SITE.url（已含 /blog），这样本地 base=/ 时生成的仍是线上正确的地址。
+ * index.md 收敛到目录本身：`index.md` → `/`，`posts/index.md` → `/posts/`。
+ */
+function pageUrl(relativePath: string): string {
+  const clean = relativePath.replace(/index\.md$/, '').replace(/\.md$/, '')
+  return `${SITE.url}/${clean}`
+}
+
+/**
+ * 构建期的文章列表。`transformPageData` 与 `buildEnd` 都用它，
+ * 规则与 `posts.data.ts` 完全一致（同一份 `transformPosts`）。
+ * createContentLoader 自带按文件 mtime 的缓存，dev 下改文章也会生效。
+ */
+let postsLoader: { load: () => Promise<Post[]> } | null = null
+function loadPosts(): Promise<Post[]> {
+  postsLoader ??= createContentLoader<Post[]>(POSTS_GLOB, {
+    ...POSTS_LOADER_OPTIONS,
+    transform: transformPosts,
+  })
+  return postsLoader.load()
+}
 
 export default defineConfigWithTheme<BlogThemeConfig>({
   lang: 'zh-CN',
@@ -55,6 +92,79 @@ export default defineConfigWithTheme<BlogThemeConfig>({
   // 页面标题：保持默认「标题 | 站名」模式（首页标题与站名相同时自动去重，
   // 避免出现「TuningLuna Blog | TuningLuna Blog」）。
   titleTemplate: true,
+
+  /**
+   * 按页补 SEO 标签。
+   *
+   * 为什么必须在这里做：`head` 是全局的，写死在里面的 canonical / og:url 会让
+   * 每一篇文章都声称自己的规范地址是首页 —— 等于告诉搜索引擎所有文章都是重复内容。
+   * 官方推荐用 `transformPageData`（它同时作用于 dev 与客户端导航），
+   * 官方文档给的示例也正是写 canonical / og:title。
+   *
+   * ⚠️ VitePress 的 head 合并规则：有 `id` 的按 `id` 去重、`meta` 按第一个非 `content`
+   *    属性去重，**其余（含 `link`）一律不去重**。所以全局 head 里不能再有 canonical，
+   *    否则每页会输出两条。
+   *
+   * 顺带把「阅读时长 / 分类 / 前后篇」注入文章页、把「最新 N 篇」注入首页 ——
+   * 这样 PostLayout / HomeLayout 不必各自 import 整份文章索引，
+   * 那份数据也就不会被拖进「每页都加载」的主题 chunk。
+   */
+  async transformPageData(pageData) {
+    const relative = pageData.relativePath
+    const url = pageUrl(relative)
+    const isPost = relative.startsWith('posts/')
+
+    pageData.frontmatter.head ??= []
+    pageData.frontmatter.head.push(
+      ['link', { rel: 'canonical', href: url }],
+      ['meta', { property: 'og:url', content: url }],
+      [
+        'meta',
+        { property: 'og:type', content: isPost ? 'article' : 'website' },
+      ],
+      ['meta', { property: 'og:title', content: pageData.title ?? SITE.title }],
+      [
+        'meta',
+        {
+          property: 'og:description',
+          content: pageData.description ?? SITE.description,
+        },
+      ],
+      // Twitter 卡片显式按页给，不依赖它回退到 og: 的行为。
+      ['meta', { name: 'twitter:title', content: pageData.title ?? SITE.title }],
+      [
+        'meta',
+        {
+          name: 'twitter:description',
+          content: pageData.description ?? SITE.description,
+        },
+      ],
+    )
+
+    if (relative === 'index.md') {
+      const posts = await loadPosts()
+      pageData.frontmatter.latestPosts = posts.slice(0, HOME_LATEST_COUNT)
+      return
+    }
+
+    if (isPost) {
+      const posts = await loadPosts()
+      // Post.url 形如 /posts/tools/git-rebase（已去掉 .html）
+      const nav = navFor(posts, `/${relative.replace(/\.md$/, '')}`)
+      if (nav) pageData.frontmatter.blogNav = nav
+    }
+  },
+
+  /** 构建结束后产出 RSS（官方文档给出的 buildEnd 用法）。outDir 已是绝对路径。 */
+  async buildEnd(siteConfig) {
+    const posts = await loadPosts()
+    writeFileSync(
+      path.join(siteConfig.outDir, 'feed.xml'),
+      buildFeed(posts, SITE),
+      'utf8',
+    )
+  },
+
   // VitePress 官方 sitemap 生成（https://vitepress.dev/guide/sitemap-generation）
   sitemap: {
     hostname: SITE.url,
@@ -104,16 +214,22 @@ export default defineConfigWithTheme<BlogThemeConfig>({
       `(function(){try{var t=localStorage.getItem('tuningluna-blog-theme');if(t!=='light'&&t!=='dark'&&t!=='system')t='dark';if(t!=='system')document.documentElement.setAttribute('data-theme',t);}catch(e){}})()`,
     ],
 
-    // SEO：title / description 由 VitePress 按页注入，这里补 canonical / OG / Twitter Card。
-    ['link', { rel: 'canonical', href: `${SITE.url}/` }],
-    ['meta', { property: 'og:type', content: 'website' }],
+    // RSS 自动发现
+    [
+      'link',
+      {
+        rel: 'alternate',
+        type: 'application/rss+xml',
+        title: SITE.title,
+        href: `${base}feed.xml`,
+      },
+    ],
+
+    // SEO：title / description 由 VitePress 按页注入；canonical / og:url / og:type /
+    // og:title / og:description / twitter:* 全部在 transformPageData 里按页生成。
+    // 这里只留站点级、与页面无关的兜底项。
     ['meta', { property: 'og:site_name', content: SITE.title }],
-    ['meta', { property: 'og:title', content: SITE.title }],
-    ['meta', { property: 'og:description', content: SITE.description }],
-    ['meta', { property: 'og:url', content: `${SITE.url}/` }],
     ['meta', { name: 'twitter:card', content: 'summary' }],
-    ['meta', { name: 'twitter:title', content: SITE.title }],
-    ['meta', { name: 'twitter:description', content: SITE.description }],
   ],
 
   markdown: {

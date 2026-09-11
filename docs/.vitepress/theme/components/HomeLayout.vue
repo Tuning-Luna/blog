@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { withBase } from 'vitepress'
-import { data as posts } from '../../data/posts.data'
+import { useData, withBase } from 'vitepress'
+import type { Post } from '../../data/posts-core'
 import { profile } from '../../data/profile'
 import { useScrollReveal } from '../composables/useScrollReveal'
 import BlogCard from './BlogCard.vue'
-import ContactSection from './ContactSection.vue'
 import M3Button from './M3Button.vue'
 
 useScrollReveal()
 
-/* 首页展示的文章数 */
-const LATEST_COUNT = 6
-const latest = computed(() => posts.slice(0, LATEST_COUNT))
+const { frontmatter } = useData()
+
+/* 「最新 N 篇」由 config.ts 的 transformPageData 按页注入（HOME_LATEST_COUNT），
+   这里只负责渲染 —— 于是首页也不必 import 整份文章索引。 */
+const latest = computed<Post[]>(() => frontmatter.value.latestPosts ?? [])
 
 /* 追光（design-system useSpotlight 的 Vue 版） */
 function handleSpotlight(e: MouseEvent) {

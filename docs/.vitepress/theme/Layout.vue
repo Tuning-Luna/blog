@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import { Content, useData } from 'vitepress'
-import BlogList from './components/BlogList.vue'
 import HomeLayout from './components/HomeLayout.vue'
 import PostLayout from './components/PostLayout.vue'
 import SiteFooter from './components/SiteFooter.vue'
 import SiteHeader from './components/SiteHeader.vue'
+
+// 列表页懒加载：BlogList 是唯一需要「整份文章索引」的组件，
+// 同步 import 会把它连同那份数据一起拖进「每页都加载」的主题 chunk。
+// 拆成异步 chunk 后，只有 /posts/** 才会下载它。
+const BlogList = defineAsyncComponent(() => import('./components/BlogList.vue'))
 
 const { frontmatter, page, site } = useData()
 

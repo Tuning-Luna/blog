@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { Content, useData, withBase } from 'vitepress'
-import { data as posts } from '../../data/posts.data'
+import type { PostNav } from '../../data/posts-core'
 import { formatDate } from '../utils/format'
+import M3Button from './M3Button.vue'
 import M3Icon from './M3Icon.vue'
 import PostToc from './PostToc.vue'
 
@@ -21,25 +22,15 @@ const lastUpdated = computed(() => {
   return formatDate(new Date(ts).toISOString())
 })
 
-// 从文章数据源匹配当前文章（阅读时间 / 分类 / 前后篇）
-const current = computed(() =>
-  posts.find((p) => p.url === `/${page.value.relativePath.replace(/\.md$/, '')}`),
-)
-
-// 分类由所在文件夹推导（见 data/categories.ts），不写在 frontmatter 里。
-const category = computed(() => current.value?.category ?? null)
-
-const older = computed(() => {
-  const i = posts.findIndex((p) => p.url === current.value?.url)
-  if (i === -1 || i + 1 >= posts.length) return null
-  return posts[i + 1]
-})
-
-const newer = computed(() => {
-  const i = posts.findIndex((p) => p.url === current.value?.url)
-  if (i === -1 || i - 1 < 0) return null
-  return posts[i - 1]
-})
+// 阅读时长 / 分类 / 前后篇由 config.ts 的 transformPageData 按页注入到 `frontmatter.blogNav`
+// （见 data/posts-core.ts 的 navFor）。所以这里不必 import 整份文章索引 ——
+// 那份数据也就不会被打进「每页都加载」的主题 chunk。
+const nav = computed<PostNav | null>(() => frontmatter.value.blogNav ?? null)
+const category = computed(() => nav.value?.category ?? null)
+const subcategory = computed(() => nav.value?.subcategory ?? null)
+const readingTime = computed(() => nav.value?.readingTime ?? 0)
+const older = computed(() => nav.value?.older ?? null)
+const newer = computed(() => nav.value?.newer ?? null)
 
 /* ---------- TOC 滚动高亮 ---------- */
 
@@ -104,12 +95,20 @@ function scrollToTop() {
       </M3Button>
 
       <header class="post-header">
+        <!-- 分类芯片指向**分类落地页**（真实可爬取的地址），不是列表页的查询参数 -->
         <div v-if="category" class="post-header__categories">
           <a
             class="post-header__category"
-            :href="withBase(`/posts/?cat=${encodeURIComponent(category.slug)}`)"
+            :href="withBase(`/posts/${category.slug}/`)"
           >
             {{ category.label }}
+          </a>
+          <a
+            v-if="subcategory"
+            class="post-header__category"
+            :href="withBase(`/posts/${category.slug}/${subcategory.slug}/`)"
+          >
+            {{ subcategory.label }}
           </a>
         </div>
 
@@ -122,9 +121,9 @@ function scrollToTop() {
             <M3Icon name="calendar" :size="14" />
             <time :datetime="rawDate">{{ dateText }}</time>
           </span>
-          <span v-if="current?.readingTime" class="post-header__meta-item">
+          <span v-if="readingTime" class="post-header__meta-item">
             <M3Icon name="clock" :size="14" />
-            {{ current.readingTime }} 分钟
+            {{ readingTime }} 分钟
           </span>
           <span v-if="lastUpdated" class="post-header__meta-item">
             更新于 {{ lastUpdated }}
