@@ -12,7 +12,7 @@
  *   选一级分类时 sub 置空，即「看该分类下的全部」。
  */
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
-import { withBase } from 'vitepress'
+import { useData, withBase } from 'vitepress'
 import {
   CATEGORIES,
   categoryOf,
@@ -26,19 +26,45 @@ import BlogCategoryFilter from './BlogCategoryFilter.vue'
 
 const PER_PAGE = 8
 
-const activeCategory = ref<string | null>(null)
-const activeSubcategory = ref<string | null>(null)
+const { frontmatter } = useData()
+
+/* 分类落地页（/posts/<分类>/）在 frontmatter 里声明预设分类。
+   它必须是 ref 的**初始值**，才能参与 SSR —— 否则静态 HTML 仍是一份未筛选的完整列表，
+   落地页对搜索引擎就毫无意义（客户端筛选是 hydration 之后才发生的）。 */
+const presetCategory = computed(
+  () => (frontmatter.value.presetCategory as string | undefined) ?? null,
+)
+const presetSubcategory = computed(
+  () => (frontmatter.value.presetSubcategory as string | undefined) ?? null,
+)
+
+const activeCategory = ref<string | null>(presetCategory.value)
+const activeSubcategory = ref<string | null>(presetSubcategory.value)
 const activeTag = ref<string | null>(null)
 const page = ref(1)
+
+// 客户端在落地页之间跳转时 BlogList 不会重建，预设值要跟着 frontmatter 走。
+// 不带 immediate：首次挂载已由上面的初始值处理。
+watch([presetCategory, presetSubcategory], ([cat, sub]) => {
+  activeCategory.value = cat
+  activeSubcategory.value = sub
+  activeTag.value = null
+  page.value = 1
+})
 
 /* ---------- URL query 同步 ---------- */
 
 function parseQuery() {
   if (typeof window === 'undefined') return
   const q = new URLSearchParams(window.location.search)
-  activeCategory.value = q.get('cat')
-  activeSubcategory.value = q.get('sub')
-  activeTag.value = q.get('tag')
+  // 只在参数**存在**时覆盖：落地页的分类来自 frontmatter，
+  // 无条件赋值会被一个空查询串清掉。
+  const cat = q.get('cat')
+  const sub = q.get('sub')
+  const tag = q.get('tag')
+  if (cat !== null) activeCategory.value = cat
+  if (sub !== null) activeSubcategory.value = sub
+  if (tag !== null) activeTag.value = tag
   const p = Number(q.get('page'))
   page.value = Number.isInteger(p) && p > 0 ? p : 1
 }
@@ -51,9 +77,10 @@ function syncQuery() {
   if (activeTag.value) q.set('tag', activeTag.value)
   if (page.value > 1) q.set('page', String(page.value))
   const s = q.toString()
-  // history.replaceState 写的是完整 URL，必须带部署 base。
-  const basePath = withBase('/posts/')
-  window.history.replaceState(null, '', s ? `${basePath}?${s}` : basePath)
+  // 用当前 pathname（已含部署 base）而不是写死 /posts/：
+  // 在分类落地页上筛选时不会跳回列表根路径。
+  const path = window.location.pathname
+  window.history.replaceState(null, '', s ? `${path}?${s}` : path)
 }
 
 onMounted(parseQuery)
@@ -72,6 +99,23 @@ const activeCategoryLabel = computed(() => {
   const child = subcategoryOf(activeCategory.value, activeSubcategory.value)
   return child ? `${parent.label} / ${child.label}` : parent.label
 })
+
+/* 落地页的预设分类（二级页会带上 sub）。列表页为 null。 */
+const presetPath = computed(() => {
+  const cat = categoryOf(presetCategory.value)
+  if (!cat) return null
+  return { cat, sub: subcategoryOf(presetCategory.value, presetSubcategory.value) }
+})
+
+/* 标题取**预设**分类而非实时筛选值 —— 否则在落地页上换个筛选 h1 就跳一下。 */
+const pageTitle = computed(
+  () => presetPath.value?.sub?.label ?? presetPath.value?.cat.label ?? 'Blog',
+)
+
+/* eyebrow：二级落地页显示它所属的一级名，一眼看出层级；其余仍是 blog。 */
+const pageEyebrow = computed(() =>
+  presetPath.value?.sub ? presetPath.value.cat.label : 'blog',
+)
 
 /* 分类筛选项：只列出真正有文章的类别（所以哪天某个分类清空了就不会出现）。
    一级计数含其下所有子文件夹；顺序取 CATEGORIES 的登记顺序；
@@ -190,8 +234,8 @@ function setPage(n: number) {
         <div class="blog-list__content">
           <!-- 标题 -->
           <header class="blog-list__header">
-            <span class="blog-list__eyebrow">blog</span>
-            <h1 class="blog-list__title">Blog</h1>
+            <span class="blog-list__eyebrow">{{ pageEyebrow }}</span>
+            <h1 class="blog-list__title">{{ pageTitle }}</h1>
           </header>
 
           <!-- 窄屏：分类面板折叠在顶部（≥1200px 由右侧粘性栏接管，见 .blog-list__rail） -->
@@ -226,16 +270,15 @@ function setPage(n: number) {
                   <time :datetime="p.date" class="blog-list__date">
                     {{ formatDate(p.date) }}
                   </time>
-                  <span v-if="p.category" class="blog-list__category">
-                    <button
-                      type="button"
-                      class="blog-list__link blog-list__link--category"
-                      :class="{ 'is-active': activeCategory === p.category.slug }"
-                      @click="selectCategory({ cat: p.category.slug, sub: null })"
-                    >
-                      {{ p.category.label }}
-                    </button>
-                  </span>
+                  <button
+                    v-if="p.category"
+                    type="button"
+                    class="blog-list__link blog-list__link--category"
+                    :class="{ 'is-active': activeCategory === p.category.slug }"
+                    @click="selectCategory({ cat: p.category.slug, sub: null })"
+                  >
+                    {{ p.category.label }}
+                  </button>
                 </div>
                 <a :href="withBase(p.url)" class="blog-list__item-title">{{ p.title }}</a>
                 <p v-if="p.description" class="blog-list__item-desc">
@@ -246,7 +289,7 @@ function setPage(n: number) {
                     v-for="t in p.tags"
                     :key="t"
                     type="button"
-                    class="blog-list__link blog-list__link--tag"
+                    class="blog-list__link"
                     :class="{ 'is-active': activeTag === t }"
                     @click="filterTag(t)"
                   >
