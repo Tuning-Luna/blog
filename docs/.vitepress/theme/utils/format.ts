@@ -7,10 +7,3 @@ export function formatDate(iso: string): string {
   const day = String(d.getDate()).padStart(2, '0')
   return `${y}-${m}-${day}`
 }
-
-/** 取 ISO 日期的年份。 */
-export function yearOf(iso: string): string {
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return ''
-  return String(d.getFullYear())
-}

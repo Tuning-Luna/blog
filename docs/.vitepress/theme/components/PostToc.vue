@@ -7,12 +7,7 @@ defineProps<{ headers: Header[]; activeId?: string }>()
 
 <template>
   <ul class="toc-list">
-    <li
-      v-for="h in headers"
-      :key="h.slug"
-      class="toc-list__item"
-      :class="`toc-list__item--level-${h.level}`"
-    >
+    <li v-for="h in headers" :key="h.slug">
       <a
         :href="`#${h.slug}`"
         class="toc-list__link"

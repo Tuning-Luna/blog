@@ -5,7 +5,6 @@ description: 深入理解 Git Rebase 的工作原理、适用场景与风险，�
 tags:
   - Git
   - 编程
-featured: true
 ---
 
 `git rebase` 是 Git 里最容易被误解的命令之一。很多人只记住「不要对公共分支 rebase」，却说不清它到底做了什么。这篇文章从提交图的角度讲清楚 rebase 的本质。

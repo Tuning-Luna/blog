@@ -66,7 +66,7 @@ const emit = defineEmits<{
           <li v-for="c in f.children" :key="c.slug">
             <button
               type="button"
-              class="blog-cat-filter__item blog-cat-filter__item--sub"
+              class="blog-cat-filter__item"
               :class="{ 'is-active': sub === c.slug }"
               :aria-pressed="sub === c.slug"
               @click="emit('select', { cat: f.slug, sub: c.slug })"
