@@ -19,7 +19,7 @@ tags: [Git, 编程]
 
 ## 小节标题从二级开始
 
-![截图说明](/tools/git-rebase-1.png)
+![截图说明](/tools/git-rebase-1.webp)
 ````
 
 存成 `docs/posts/<分类>/<文件名>.md`，图片放 `docs/public/<同一路径>/`，`npm run dev` 预览，`git push` 发布。
@@ -56,7 +56,6 @@ tags: [Git, 编程]
 | `description` | 建议 | 一句话摘要。列表卡片正文、文章页副标题都用它。不写的话卡片上是空的 |
 | `tags` | 建议 | 细粒度标签，见第 5 节 |
 | `draft` | 可选 | `true` 时不出现在列表里（但页面**仍会被构建**，见第 7 节） |
-| `featured` | — | ⚠️ 目前不生效，见下方 |
 
 ```yaml
 ---
@@ -67,22 +66,15 @@ tags: [Git, 编程]
 ---
 ```
 
-### ⚠️ 两个坑
+### ⚠️ 三个坑
 
 1. **不要写 `categories` 字段。** 分类已经改为由文件夹决定，`categories` 已从全仓库移除。
    写了不会报错，但也不会有任何效果——只会让下一个改代码的人困惑。
-2. **`title` / `description` 里不要出现半角冒号后跟空格**（如 `Git: 入门`）。
+2. **不要写 `featured` 字段。** 这个字段已经删掉了，首页「最新文章」就是按日期取最新 6 篇。
+   同样地，写了也不生效。（`<!-- more -->` 摘要截断也没有接——摘要字段已移除。）
+3. **`title` / `description` 里不要出现半角冒号后跟空格**（如 `Git: 入门`）。
    YAML 会直接解析失败、构建报错。用中文全角冒号「：」代替（看现有文章的写法）。
    另外 `#`、值以 `[` 或 `{` 开头等也有 YAML 语义，拿不准就用引号包起来。
-
-### ⚠️ 目前不生效的字段
-
-| 字段 | 现状 |
-| --- | --- |
-| `featured: true` | 数据层会读取，但**没有任何组件消费它**。首页「最新文章」是按日期取最新 6 篇，不看这个字段。 |
-| `<!-- more -->` 摘要截断 | `excerpt` 会被加载器解析出来，但只有「精选大卡」模式才会渲染，而该模式当前没有任何地方启用。 |
-
-写不写都不影响显示。等哪天这两处接上线了，再补也不迟。
 
 ---
 
@@ -105,10 +97,10 @@ tags: [Git, 编程]
 
 | 文章 | 图片 |
 | --- | --- |
-| `docs/posts/tools/git-rebase.md` | `docs/public/tools/git-rebase-1.png` |
-| `docs/posts/software/windows/bitwarden.md` | `docs/public/software/windows/bitwarden-1.png` |
+| `docs/posts/tools/git-rebase.md` | `docs/public/tools/git-rebase-1.webp` |
+| `docs/posts/software/windows/bitwarden.md` | `docs/public/software/windows/bitwarden-1.webp` |
 
-规则一句话：`docs/posts/<路径>/<文件名>.md` → `docs/public/<路径>/<文件名>-N.png`（N 从 1 开始）。
+规则一句话：`docs/posts/<路径>/<文件名>.md` → `docs/public/<路径>/<文件名>-N.webp`（N 从 1 开始）。
 
 **`docs/public/` 下的文件会原样复制到站点根目录**，不作任何处理、也不改名。
 文章引用的图片和被引用的路径必须对得上，否则线上 404。
@@ -118,7 +110,7 @@ tags: [Git, 编程]
 用 **Markdown 图片语法 + 绝对路径**：
 
 ```md
-![Bitwarden 主界面](/software/windows/bitwarden-1.png)
+![Bitwarden 主界面](/software/windows/bitwarden-1.webp)
 ```
 
 - 路径以 `/` 开头，**不要**写 `./` 或 `../`。
@@ -127,10 +119,21 @@ tags: [Git, 编程]
   （`/blog/`，已实测构建产物是 `/blog/software/...`）；原始 `<img>` 不在官方文档覆盖范围内，
   写绝对路径有线上 404 的风险。有需要加 `width` 之类属性时，优先用 Markdown 语法 + 外层的 `<div>` 包一层。
 
-### 体积
+### 格式与体积
 
-截图**先压缩再放进来**。现有 27 张软件截图总共 8.2MB，最大一张 1.9MB——
-图片是直接原样进产物的，站点是静态托管，体积全由访客承担。
+**用 WebP。** 截图先转 WebP 再放进来，别直接丢 PNG：`docs/public/` 下的文件是**原样复制**进产物的，
+构建不做任何优化，体积全由访客承担。软件推荐那批截图从 PNG 转成 WebP 后，
+27 张从 8.2MB 降到约 1.9MB。
+
+```bash
+# 机器上没有 ImageMagick / cwebp / sharp，用 ffmpeg（保持原始像素尺寸）
+ffmpeg -y -i in.png -c:v libwebp -quality 80 -compression_level 6 out.webp
+```
+
+`-quality 80` 是实测过的平衡点：文字类截图（窗口 UI、文件列表）在 q80 下肉眼无差别；
+如果图里彩色小字特别密，可以提到 85。**转完自己看一眼文字有没有糊**——
+有损 WebP 强制 4:2:0 色度二次采样，最容易伤到的就是彩色小字。
+
 图片已开启全局懒加载，但那只是延迟加载，不减体积。
 
 ---

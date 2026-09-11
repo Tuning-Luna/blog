@@ -22,9 +22,10 @@ TuningLuna 的个人博客。基于 **VitePress** 的纯静态站点：本地写
 .
 ├── docs/                      # 站点内容与配置
 │   ├── index.md               # 首页（layout: home，正文由 HomeLayout.vue 渲染）
-│   ├── about.md               # 关于（只保留联系方式）
 │   ├── posts/
 │   │   ├── index.md           # 博客列表（layout: blog，正文由 BlogList.vue 渲染）
+│   │   ├── <分类>/index.md    # ★ 分类落地页（8 个：5 个一级 + software + windows/android）
+│   │   │                      #   声明 presetCategory / presetSubcategory，由 BlogList 渲染
 │   │   ├── frontend/          # ★ 文章按分类文件夹存放，文件夹名即分类
 │   │   ├── backend/           #   frontend / backend / tools / interview / essay
 │   │   ├── tools/             #   software/ 下还有二级 windows / android
@@ -34,17 +35,20 @@ TuningLuna 的个人博客。基于 **VitePress** 的纯静态站点：本地写
 │   │       ├── windows/
 │   │       └── android/
 │   ├── public/favicon.svg
-│   ├── public/software/       # 软件推荐文章的截图（按 windows/ android/ 分）
+│   ├── public/software/       # 软件推荐文章的截图（WebP，按 windows/ android/ 分）
+│   ├── public/JSA-279k.webp   # 站点背景图（全屏纹理）
 │   └── .vitepress/
-│       ├── config.ts          # 站点配置（SEO head / 字体 / markdown / themeConfig）
-│       ├── data/posts.data.ts # ★ 文章数据加载器（createContentLoader）
+│       ├── config.ts          # 站点配置（SEO / RSS / 字体 / markdown / themeConfig）
+│       ├── data/posts-core.ts # ★ 文章解析核心：类型 + 过滤 + 分类推导 + 排序（三处共用）
+│       ├── data/posts.data.ts # ★ 客户端数据源（createContentLoader 薄壳）
+│       ├── data/feed.ts       # ★ RSS 2.0 生成（buildEnd 调用）
 │       ├── data/categories.ts # ★ 分类注册表（两级：展示名 / 展示顺序）
 │       ├── data/profile.ts        # 人工维护的个人资料（联系方式、头像等）
 │       └── theme/             # ★ 自定义主题
-│           ├── index.ts       # 注册 Layout + 全局组件 + 导入样式
+│           ├── index.ts       # 导出 Layout + 导入样式（不做全局组件注册）
 │           ├── Layout.vue     # 按 frontmatter.layout 分发 home/blog/post/doc
 │           ├── env.d.ts       # @localSearchIndex 虚拟模块类型声明
-│           ├── components/    # M3 组件（Vue 重写）+ BlogList/BlogSidebar/PostLayout/LocalSearch 等
+│           ├── components/    # M3 组件（Vue 重写）+ BlogList/BlogCard/PostLayout/LocalSearch 等
 │           ├── composables/   # useTheme（三态主题）/ useScrollReveal
 │           ├── vendor/        # ★ 从 design-system 复制的 CSS（自包含，见 vendor/README.md）
 │           ├── styles/        # index.css 按顺序导入 vendor CSS + 站点层叠样式
@@ -96,14 +100,24 @@ npm run typecheck  # vue-tsc 类型检查
 
 ## 主题架构要点
 
-- **完全自定义主题**（`theme/index.ts` 导出 `{ Layout, enhanceApp }`），不 `extends` DefaultTheme。`<Content />` 渲染 Markdown。
-- **站点背景**：`docs/public/JSA-279k.png`（暗色照片，玻璃模糊层）。`Layout.vue` 用 `useData().site.base`
+- **完全自定义主题**（`theme/index.ts` 只导出 `{ Layout }`），不 `extends` DefaultTheme，**不做全局组件注册** ——
+  所有组件在各文件显式 import（依赖可见，也不会把组件拖进「每页都加载」的主题 chunk）。`<Content />` 渲染 Markdown。
+- **站点背景**：`docs/public/JSA-279k.webp`（暗色照片，玻璃模糊层）。`Layout.vue` 用 `useData().site.base`
   运行时注入 `--site-bg-image`（GitHub Pages 下 base 正确）；模糊/蒙层由 design-system `.site-bg` 处理。
 - **布局分发**（`Layout.vue`）：`frontmatter.layout` 显式指定，或 `posts/*` 自动识别为 `post`，其余为 `doc`。
 - **三态主题**：`theme/composables/useTheme.ts` + config head 内联脚本，localStorage 键 `tuningluna-blog-theme`（两处必须一致）。`appearance: false` 已关闭 VitePress 内置切换。
 - **TOC 依赖 `markdown.headers: true`**（config 已开，别删）。
 - **代码块**：VitePress 构建期输出 `div.language-x > pre.shiki.vp-code`，span 携带 `--shiki-light/--shiki-dark`；明暗切换规则在 `styles/code.css`（双通道）。复制按钮由 VitePress 内核自动接线，无需自己实现。
-- **博客数据**：`data/posts.data.ts` 聚合 `docs/posts/*.md`（过滤 `draft` 与列表页 `posts/index.md`，按 date 倒序，估算阅读时间）。`BlogList.vue` 使用 `createContentLoader` 数据，纯静态、无运行时请求。
+- **博客数据**：解析规则集中在 `data/posts-core.ts`（`transformPosts`：过滤 `draft` 与所有 `index.md`，
+  推导一级/二级分类，按 date 倒序，估算阅读时间），**三个消费方共用一份**，不要另写：
+  1. `data/posts.data.ts` —— 列表页/首页的客户端数据源（`createContentLoader` 薄壳）；
+  2. `config.ts` 的 `transformPageData` —— 把阅读时长/分类/前后篇注入文章页、最新 N 篇注入首页；
+  3. `config.ts` 的 `buildEnd` —— 生成 RSS。
+- **数据分包**：`BlogList` 在 `Layout.vue` 里是 `defineAsyncComponent` 懒加载的，且 `PostLayout`/`HomeLayout`
+  **不再 import 整份文章索引**（改读注入的 `frontmatter.blogNav` / `frontmatter.latestPosts`）——
+  否则那份数据会回到「每页都加载」的主题 chunk 里。当前 `theme.*.js` 约 40 KB 且不含文章数据，
+  数据在单独的 `BlogList.*.js`（仅列表页加载）。**加新功能时别把 `posts.data` 再 import 回这两个组件。**
+  > `defineAsyncComponent` 在 SSG 下会被等待（已实测产物有完整列表）—— 官方文档没写这一点，改动后请重新验证。
 
 ## 已启用的官方 VitePress 能力（config.ts）
 
@@ -111,6 +125,12 @@ npm run typecheck  # vue-tsc 类型检查
   `@localSearchIndex` 虚拟模块 + `minisearch`（直接依赖）查询；`/` 打开、Esc 关闭、方向键导航。
   `storeFields` 扩展了 `text` 以支持摘要（默认只存 title/titles）。
 - **sitemap**：`sitemap: { hostname: SITE.url }`，构建生成 `sitemap.xml`（官方能力）。
+- **canonical / Open Graph**：**按页**生成，在 `config.ts` 的 `transformPageData` 里写进 `frontmatter.head`。
+  ⚠️ 绝不能把 canonical 放进全局 `head`：VitePress 的 head 合并规则只给 `meta`（按第一个非 `content` 属性）
+  和带 `id` 的元素去重，**`link` 不去重** —— 全局加一条就会变成每页两条 canonical。
+- **RSS**：`config.ts` 的 `buildEnd` 用 `createContentLoader(...).load()` 生成 `dist/feed.xml`（官方给的用法），
+  模板在 `data/feed.ts`；`head` 里有 `rel="alternate"` 自动发现链接。写文件用 `path.join(siteConfig.outDir, …)`，
+  `outDir` 已是绝对路径，别硬编码。
 - **代码行号**：`markdown.lineNumbers: true`（样式在 `styles/code.css`）。
 - **图片懒加载**：`markdown.image.lazyLoading: true`。
 - **标题去重**：`titleTemplate: true`（首页标题与站名相同自动去重）。
@@ -148,7 +168,22 @@ frontmatter 里**没有** `categories` 字段（已移除），只有 `tags` 作
 
 - `cat` 一级分类；**单独出现时表示「该一级下的全部」**（含其所有二级）。
 - `sub` 二级分类，必须与 `cat` 搭配。
-- 点卡片上的分类芯片只会设置 `cat`；二级只能从右侧筛选面板进入。
+- 查询参数是**列表页内的就地筛选**；右侧筛选面板用它。筛选时写的是**当前 pathname**，
+  所以在落地页上筛选不会跳回 `/posts/`。
+
+### 分类落地页
+
+每个分类都有一个真实地址：`docs/posts/<分类>/index.md`（二级就是 `<分类>/<二级>/index.md`），
+共 8 个 —— `/posts/frontend/`、`/posts/software/`、`/posts/software/windows/` 等。
+它们会被 sitemap 收录、可被搜索引擎抓取，也是卡片与文章页分类芯片的跳转目标。
+
+- frontmatter 用 `layout: blog` + `presetCategory`（+ `presetSubcategory`）。
+- `BlogList.vue` 把预设值作为筛选 ref 的**初始值**，因此 **SSR 输出的就是该分类的文章** ——
+  这是落地页对 SEO 有意义的唯一前提（纯客户端筛选的话，静态 HTML 仍是一份完整列表）。
+- `parseQuery()` 只在参数**存在**时覆盖，否则空查询串会把预设值清掉。
+- 这些 `index.md` 由 `posts-core.ts` 的 `isIndexPage()` 排除出文章列表。
+  ⚠️ VitePress 给 `index.md` 的 url 是**目录形式**（`/posts/frontend/`），所以判据是
+  **「以 `/` 结尾」或「以 `/index` 结尾」**；只判断 `=== '/posts'` 会漏掉所有落地页。
 
 ### 列表页布局
 
@@ -175,7 +210,7 @@ frontmatter 里**没有** `categories` 字段（已移除），只有 `tags` 作
    （`featured` 字段仍在类型里，但**没有任何组件消费它**，首页「最新」是按日期取 6 篇。）
 3. **正文不要写顶部的 `# 标题`**（文章页 h1 由 `PostLayout` 从 frontmatter.title 渲染，写了会重复）。
 4. 图片放 `docs/public/<与文章相同的路径>/`，正文用 **Markdown 图片语法**
-   （`![alt](/路径/文件名-1.png)`）引用 —— 只有 Markdown 语法会被自动加上部署 base；
+   （`![alt](/路径/文件名-1.webp)`）引用 —— 只有 Markdown 语法会被自动加上部署 base；
    原始 `<img src="/...">` 不在 VitePress 的 base 改写覆盖范围内。
 5. 文件名不要叫 `index.md`（会被当成目录落地页排除在列表外）。
 6. 本地 `npm run dev` 预览 → 满意后 `git push` 即可自动部署。
@@ -195,6 +230,25 @@ frontmatter 里**没有** `categories` 字段（已移除），只有 `tags` 作
 - 修改联系方式与头像改 `docs/.vitepress/data/profile.ts`（人工维护）。
 - 联系方式 section 组件：`ContactSection.vue`（GitHub/Gmail/Discord/Telegram/Spotify/Bilibili），
   用于首页与 About 页。
+
+## 提交规范
+
+**一个提交只做一件事。** 按层次拆开 —— 数据层 / 主题组件 / 内容 / 资源 / 文档 各自成一个 commit，
+不要把互不相关的改动堆在一起。
+
+- **改完就提交，别攒。** 攒到最后各改动会互相依赖，想按层拆也拆不动了：
+  拆出来的中间提交根本编译不过。已经踩过的两个例子 ——
+  「数据层去掉 `excerpt` 字段」必须和「组件不再引用 `post.excerpt`」同一个提交；
+  「移除全局组件注册」必须和「给 PostLayout 补上 `import M3Button`」同一个提交。
+- **前缀**用 Conventional Commits：`feat` / `fix` / `refactor` / `perf` / `docs` / `style` / `chore`，
+  可带 scope，如 `refactor(data):`、`docs(posts):`、`perf(assets):`。
+- **正文用中文写「为什么」**，而不是复述「改了什么」。取舍、验证结果、踩过的坑都写进去 ——
+  过一段时间后 `git log` 是唯一还在现场的记录。
+- **按提交粒度验证**：涉及代码的至少跑 `npm run typecheck`；涉及构建产物 / SEO / 资源的要跑
+  `npm run build` 并检查产物（canonical 条数、feed 条目数、产物体积这类都可直接 grep 验证）。
+- **不要提交** `docs/.vitepress/dist/`、`docs/.vitepress/cache/`（已在 `.gitignore`）。
+- **默认只提交、不推送。** push 到 `main` 会触发 GitHub Actions 部署，何时发布由仓库主人决定。
+- 由 Agent 提交时，消息末尾加：`Co-Authored-By: Claude Code <noreply@anthropic.com>`
 
 ## 工作纪律
 
