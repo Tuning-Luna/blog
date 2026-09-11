@@ -4,7 +4,7 @@
    ===================================================================== */
 
 /* 站点背景图 —— design-system 参数化 token（默认 none，见 site-background.css）。
-   .site-bg 负责模糊/缩放/主题蒙层；实际图片 URL（docs/public/JSA-279k.png）由
+   .site-bg 负责模糊/缩放/主题蒙层；实际图片 URL（docs/public/JSA-279k.webp）由
    Layout.vue 用 useData().site.base 运行时注入，保证 GitHub Pages 的 base 正确。 */
 
 /* 页面骨架：垂直 flex 列，至少撑满一屏。

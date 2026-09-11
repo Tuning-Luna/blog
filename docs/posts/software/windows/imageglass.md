@@ -10,4 +10,4 @@ tags: [Windows, 图片查看]
 - 官网：https://imageglass.org/
 - GitHub：https://github.com/d2phap/ImageGlass （13K）
 
-![ImageGlass](/software/windows/imageglass-1.png)
+![ImageGlass](/software/windows/imageglass-1.webp)

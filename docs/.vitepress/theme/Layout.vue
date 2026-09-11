@@ -13,9 +13,10 @@ const BlogList = defineAsyncComponent(() => import('./components/BlogList.vue'))
 
 const { frontmatter, page, site } = useData()
 
-// 站点背景图：docs/public/JSA-279k.png（暗色纹理照片）。
+// 站点背景图：docs/public/JSA-279k.webp（暗色纹理照片；原文件其实是个 JPEG，
+// 只是挂着 .png 扩展名，转 WebP 时一并纠正）。
 // 用运行时 base 拼 URL，适配 GitHub Pages 项目页 /<repo>/ 与用户页 /。
-const siteBgImage = `url(${site.value.base}JSA-279k.png)`
+const siteBgImage = `url(${site.value.base}JSA-279k.webp)`
 
 // 页面布局优先级：
 //   1. frontmatter.layout 显式指定（home → 个人主页；blog → 博客列表；post → 文章页）

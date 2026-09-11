@@ -9,4 +9,4 @@ tags: [Windows, 磁盘分析, 系统维护]
 
 - 官网：https://windirstat.net/
 
-![WinDirStat](/software/windows/windirstat-1.png)
+![WinDirStat](/software/windows/windirstat-1.webp)

@@ -12,4 +12,4 @@ tags: [Windows, Android, 投屏, 开源]
 - 官网：https://scrcpy.org/
 - GitHub：https://github.com/Genymobile/scrcpy （138K+ Stars）
 
-![scrcpy](/software/windows/scrcpy-1.png)
+![scrcpy](/software/windows/scrcpy-1.webp)

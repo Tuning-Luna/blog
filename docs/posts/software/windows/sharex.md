@@ -12,6 +12,6 @@ tags: [Windows, 截图, 录屏, 开源]
 - 官网：https://getsharex.com/
 - GitHub：https://github.com/ShareX/ShareX （36K Stars）
 
-![ShareX](/software/windows/sharex-1.png)
+![ShareX](/software/windows/sharex-1.webp)
 
-![ShareX](/software/windows/sharex-2.png)
+![ShareX](/software/windows/sharex-2.webp)

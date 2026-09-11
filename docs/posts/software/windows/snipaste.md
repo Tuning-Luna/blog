@@ -11,4 +11,4 @@ tags: [Windows, 截图, 效率]
 
 - 官网：https://www.snipaste.com/
 
-![Snipaste](/software/windows/snipaste-1.png)
+![Snipaste](/software/windows/snipaste-1.webp)

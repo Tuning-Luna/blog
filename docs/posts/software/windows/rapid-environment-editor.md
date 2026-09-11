@@ -9,4 +9,4 @@ tags: [Windows, 环境变量, 开发工具]
 
 - 官网：https://www.rapidee.com/en/about
 
-![RapidEnvironmentEditor](/software/windows/rapid-environment-editor-1.png)
+![RapidEnvironmentEditor](/software/windows/rapid-environment-editor-1.webp)

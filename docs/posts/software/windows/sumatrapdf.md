@@ -12,4 +12,4 @@ tags: [Windows, PDF, 阅读器]
 - 官网：https://www.sumatrapdfreader.org/
 - GitHub：https://github.com/sumatrapdfreader/sumatrapdf （16K+ Stars）
 
-![SumatraPDF](/software/windows/sumatrapdf-1.png)
+![SumatraPDF](/software/windows/sumatrapdf-1.webp)

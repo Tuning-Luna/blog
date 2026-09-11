@@ -11,6 +11,6 @@ Chrome Extensions，Windows，Android数据通用，免费版功能还是很足�
 
 - 官网：https://bitwarden.com/
 
-![Bitwarden](/software/windows/bitwarden-1.png)
+![Bitwarden](/software/windows/bitwarden-1.webp)
 
-![Bitwarden](/software/windows/bitwarden-2.png)
+![Bitwarden](/software/windows/bitwarden-2.webp)

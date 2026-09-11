@@ -13,4 +13,4 @@ tags: [Windows, 压缩, 开源]
 
 - 官网：https://www.7-zip.org/
 
-![7zip](/software/windows/7zip-1.png)
+![7zip](/software/windows/7zip-1.webp)

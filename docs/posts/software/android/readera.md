@@ -9,4 +9,4 @@ tags: [Android, 电子书, 阅读器]
 
 - 官网：https://readera.org/
 
-![ReadEra](/software/android/readera-1.png)
+![ReadEra](/software/android/readera-1.webp)

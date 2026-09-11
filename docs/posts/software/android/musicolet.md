@@ -11,4 +11,4 @@ tags: [Android, 音乐]
 
 - Google Play：https://play.google.com/store/apps/details?id=in.krosbits.musicolet&hl=en_US
 
-![Musicolet](/software/android/musicolet-1.png)
+![Musicolet](/software/android/musicolet-1.webp)

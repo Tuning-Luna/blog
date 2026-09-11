@@ -9,6 +9,6 @@ tags: [Windows, 系统优化]
 
 - GitHub：https://github.com/rayenghanmi/RyTuneX （4.6K Stars）
 
-![RyTuneX](/software/windows/rytunex-1.png)
+![RyTuneX](/software/windows/rytunex-1.webp)
 
-![RyTuneX](/software/windows/rytunex-2.png)
+![RyTuneX](/software/windows/rytunex-2.webp)

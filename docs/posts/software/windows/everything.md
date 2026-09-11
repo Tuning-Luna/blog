@@ -9,4 +9,4 @@ tags: [Windows, 文件搜索, 效率]
 
 - 官网：https://www.voidtools.com/support/everything/
 
-![Everything](/software/windows/everything-1.png)
+![Everything](/software/windows/everything-1.webp)

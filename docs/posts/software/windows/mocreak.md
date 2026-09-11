@@ -10,4 +10,4 @@ tags: [Windows, Office, 效率]
 - 官网：https://www.mocreak.com/
 - GitHub：https://github.com/OdysseusYuan/LKY_OfficeTools （11K Stars）
 
-![Mocreak](/software/windows/mocreak-1.png)
+![Mocreak](/software/windows/mocreak-1.webp)

@@ -10,4 +10,4 @@ tags: [Windows, 启动器, 效率]
 - GitHub：https://github.com/fanchenio/DawnLauncher  （839 Stars）
 - 官网：https://dawnlauncher.com/
 
-![DawnLauncher](/software/windows/dawnlauncher-1.png)
+![DawnLauncher](/software/windows/dawnlauncher-1.webp)

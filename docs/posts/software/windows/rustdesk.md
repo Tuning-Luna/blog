@@ -13,6 +13,6 @@ tags: [Windows, Android, 远程控制, 开源]
 - 官网：https://rustdesk.com/
 - GitHub：https://github.com/rustdesk/rustdesk （111K Stars）
 
-![RustDesk](/software/windows/rustdesk-1.png)
+![RustDesk](/software/windows/rustdesk-1.webp)
 
-![RustDesk](/software/windows/rustdesk-2.png)
+![RustDesk](/software/windows/rustdesk-2.webp)

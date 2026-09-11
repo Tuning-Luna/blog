@@ -11,6 +11,6 @@ tags: [Windows, 剪贴板, 效率, 开源]
 
 - GitHub：https://github.com/Y-ASLant/ElegantClipboard
 
-![ElegantClipboard](/software/windows/elegantclipboard-1.png)
+![ElegantClipboard](/software/windows/elegantclipboard-1.webp)
 
-![ElegantClipboard](/software/windows/elegantclipboard-2.png)
+![ElegantClipboard](/software/windows/elegantclipboard-2.webp)

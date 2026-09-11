@@ -12,6 +12,6 @@ tags: [Windows, Android, 文件传输, 开源]
 - 官网：https://localsend.org/
 - GitHub：https://github.com/localsend/localsend （78K Stars）
 
-![LocalSend](/software/windows/localsend-1.png)
+![LocalSend](/software/windows/localsend-1.webp)
 
-![LocalSend](/software/windows/localsend-2.png)
+![LocalSend](/software/windows/localsend-2.webp)

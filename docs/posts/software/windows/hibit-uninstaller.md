@@ -9,4 +9,4 @@ tags: [Windows, 卸载, 系统维护]
 
 - 官网：https://www.hibitsoft.ir/Uninstaller.html
 
-![HibitUninstaller](/software/windows/hibit-uninstaller-1.png)
+![HibitUninstaller](/software/windows/hibit-uninstaller-1.webp)

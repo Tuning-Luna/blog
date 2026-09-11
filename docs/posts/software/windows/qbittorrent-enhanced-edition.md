@@ -9,4 +9,4 @@ tags: [Windows, 下载, BT]
 
 - GitHub：https://github.com/c0re100/qBittorrent-Enhanced-Edition  （25.5K）
 
-![qBittorrent-Enhanced-Edition](/software/windows/qbittorrent-enhanced-edition-1.png)
+![qBittorrent-Enhanced-Edition](/software/windows/qbittorrent-enhanced-edition-1.webp)

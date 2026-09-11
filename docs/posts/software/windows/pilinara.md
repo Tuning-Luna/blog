@@ -11,4 +11,4 @@ tags: [Windows, Android, Bilibili]
 
 - GitHub：https://github.com/Starfallan/PiliNara （300Stars）
 
-![PiliNara](/software/windows/pilinara-1.png)
+![PiliNara](/software/windows/pilinara-1.webp)
