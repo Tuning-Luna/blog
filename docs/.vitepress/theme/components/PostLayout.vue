@@ -80,14 +80,19 @@ function scrollToTop() {
 
 <template>
   <main class="site-main post-layout">
-    <!-- 目录（窄屏折叠） -->
-    <details v-if="headers.length" class="post-toc-mobile">
-      <summary class="post-toc-mobile__summary">目录</summary>
-      <PostToc :headers="headers" :active-id="activeId" />
-    </details>
-
     <!-- 正文列 -->
     <article class="post-layout__content">
+      <!-- 目录（窄屏折叠）—— 必须在内容列**内部**。
+           放在 .post-layout 下当兄弟节点会让它变成 flex item：它的 flex base size 由
+           `width: 100%` 决定（= 容器整宽），而本列是 `flex: 1`（basis 0），负剩余空间
+           按 basis 加权分配后几乎全压到本列上，<1200px 时正文被挤成一条竖条。
+           与 BlogList 的 .blog-filter-mobile 保持一致（它就在内容列内部），
+           见 blog.css 里「同一套双位置做法」那段注释。 -->
+      <details v-if="headers.length" class="post-toc-mobile">
+        <summary class="post-toc-mobile__summary">目录</summary>
+        <PostToc :headers="headers" :active-id="activeId" />
+      </details>
+
       <!-- 返回列表（M3 text button + 前导箭头图标） -->
       <M3Button :href="withBase('/posts/')" variant="text" class="post-back">
         <M3Icon name="arrowLeft" :size="18" />
