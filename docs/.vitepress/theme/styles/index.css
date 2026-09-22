@@ -25,6 +25,7 @@
 @import '../vendor/components/AppBar.css';
 
 /* 站点层叠样式 */
+@import './typography.css'; /* 中文排版：字体族覆盖 + 长文阅读派生 token，须在消费方之前 */
 @import './layout.css';
 @import './markdown.css';
 @import './code.css';

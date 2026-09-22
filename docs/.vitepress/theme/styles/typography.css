@@ -1,0 +1,110 @@
+/* =====================================================================
+   中文排版层（站点级）
+   ---------------------------------------------------------------------
+   本站正文以中文为主，但字号体系来自 MD3 —— 而 MD3 的 typescale 是给
+   **UI 文本**标定的，直接拿来排长文中文有两处不合：行高偏紧、以及给正文
+   加了统一字距。这个文件放置所有「中文长文阅读」相关的站点级修正。
+
+   硬性约束：theme/vendor/ 是 design-system 的副本，其 tokens.css 里的 MD3
+   规格值不得改动（AGENT-GUIDE §16 / CLAUDE.md 规则 1）。所以这里的做法是
+   在站点层**覆盖消费方**（.vp-doc 读哪个值）与**新增站点级派生 token**，
+   而不是去改 vendor 里的规格 token。
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1) 中文标点走 CJK 字形
+   ---------------------------------------------------------------------
+   字体栈是 'Inter' 打头（见 vendor/tokens.css 的 --md-ref-typeface），而
+   Inter 覆盖 U+2000-206F —— 也就是 “ ” ‘ ’ —— …… · 这些码位。于是中文
+   句子里的引号和破折号会以 **Inter 的拉丁字形与拉丁字宽**渲染，和周围的
+   汉字风格不一。
+
+   实测（16px 下量同一个 U+201C 的渲染宽度）：
+     正文栈          → 7.05px   ← 用的是 Inter 的拉丁引号
+     强制 'Inter'    → 7.05px   ← 完全一致，确认就是它
+     强制 PingFang / Microsoft YaHei → 16px（全角，与汉字同宽）
+   全角引号被排成不到一半宽，是肉眼可见的中文排版瑕疵。
+
+   做法照搬 VitePress 官方主题（styles/fonts.css 里叫 Punctuation SC，
+   专门为 :lang(zh) 修这个问题）：注册一个**只覆盖这些码位**的本地字体族，
+   用 local() 指向系统中文字体，零网络请求（因此不违反「禁 Google Fonts、
+   字体只从 CDN 取」那条约束）。
+
+   与官方的差异（有意）：官方还把 U+007E(~) 与 U+002F(/) 纳入，我这里不收 ——
+   那两个是 ASCII，保持 Inter 字形更稳，本仓库正文里它们多出现在代码式
+   写法（如 `和/或`、`~100`）而非标点语境。改动范围越小越好。
+
+   若系统三个字体都没有（如部分 Linux），该 @font-face 不可用，浏览器会
+   自然退回下一个字体族（即当前行为），不会更糟。
+   --------------------------------------------------------------------- */
+@font-face {
+  font-family: 'Punctuation SC';
+  font-weight: 400;
+  src:
+    local('PingFang SC Regular'), local('Noto Sans CJK SC'),
+    local('Microsoft YaHei');
+  unicode-range: U+2013, U+2014, U+2018, U+2019, U+201C, U+201D, U+2026, U+00B7,
+    U+2E3A;
+}
+
+@font-face {
+  font-family: 'Punctuation SC';
+  font-weight: 500;
+  src:
+    local('PingFang SC Medium'), local('Noto Sans CJK SC Medium'),
+    local('Microsoft YaHei');
+  unicode-range: U+2013, U+2014, U+2018, U+2019, U+201C, U+201D, U+2026, U+00B7,
+    U+2E3A;
+}
+
+@font-face {
+  font-family: 'Punctuation SC';
+  font-weight: 700;
+  src:
+    local('PingFang SC Semibold'), local('Noto Sans CJK SC Bold'),
+    local('Microsoft YaHei Bold');
+  unicode-range: U+2013, U+2014, U+2018, U+2019, U+201C, U+201D, U+2026, U+00B7,
+    U+2E3A;
+}
+
+/*
+   把它插到字体栈最前面。这里重声明了整个栈而不是「追加」—— CSS 没有向
+   已有 var() 值前插的语法，官方主题也是整条重写的。代价是这份列表与
+   vendor/tokens.css 有两处重复，若上游改了栈需要同步；换来的收益是
+   vendor 保持逐字一致。`:root:where(:lang(zh))` 的特异性等于 :root，靠
+   index.css 里本文件排在 vendor 之后取胜。
+*/
+:root:where(:lang(zh)) {
+  --md-ref-typeface:
+    'Punctuation SC', 'Inter', 'Noto Sans SC', 'PingFang SC',
+    'Microsoft YaHei', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --md-ref-typeface-display:
+    'Punctuation SC', 'Manrope', 'Inter', 'Noto Sans SC', 'PingFang SC',
+    'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+}
+
+/* ---------------------------------------------------------------------
+   2) 长文阅读的站点级派生 token
+   ---------------------------------------------------------------------
+   行高/字距都不随主题变化，所以是单值 token，**不需要**双通道
+   （AGENT-GUIDE「NEVER 新增只有单主题值的 token」针对的是主题感知的
+   颜色类 token）。
+   --------------------------------------------------------------------- */
+:root {
+  /*
+    中文长文行高。依据 W3C clreq §7.1.1.5：行间距（line gap）常取字号的
+    50%–100%，且通常不超过字号 —— 即行高 1.5–2.0，1.5 是**下限**。
+    MD3 的 body-large 给的正是 1.5（16/24），而中文没有西文那样的升部/
+    降部视觉补偿，长文阅读需要更松。实测中文站点多落在 1.7–1.8
+    （阮一峰 1.8、张鑫旭 1.7），西文站点 1.45–1.75 —— 1.75 是两者交集。
+  */
+  --post-reading-line-height: 1.75;
+
+  /*
+    行内字距。MD3 的 body-large-tracking 是 0.5px，为**拉丁 UI 文本**标定；
+    clreq §6.3.3 讲的字距是针对「汉字与西文相邻」处（最多 1/4 em），并不是
+    给汉字之间加统一字距 —— 给汉字加 tracking 不属于中文排版惯例，且
+    letter-spacing 是继承属性，会波及行内代码等所有后代。故置为 normal。
+  */
+  --post-reading-tracking: normal;
+}
