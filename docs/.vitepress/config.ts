@@ -1,7 +1,9 @@
 import { writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { createContentLoader, defineConfigWithTheme } from 'vitepress'
+import type { MarkdownRenderer } from 'vitepress'
 import { buildFeed } from './data/feed'
+import { SEARCH_STORE_FIELDS, tokenizeCJK } from './data/search-core'
 import {
   POSTS_GLOB,
   POSTS_LOADER_OPTIONS,
@@ -21,10 +23,26 @@ interface BlogThemeConfig {
     options?: {
       detailedView?: boolean
       disableQueryPersistence?: boolean
-      /** 传给构建期 MiniSearch 的选项（storeFields 增加 text 以支持摘要）。 */
+      /** 构建期 MiniSearch 的选项（storeFields 增加 text 以支持摘要；tokenize 为中文分词）。 */
       miniSearch?: {
-        options?: { storeFields?: string[] }
+        options?: {
+          storeFields?: string[]
+          /**
+           * 中文分词器 —— 见 `data/search-core.ts`。
+           * ⚠️ 索引 JSON 里不含分词器，客户端必须传同一份（LocalSearch.vue 已 import）。
+           */
+          tokenize?: (text: string) => string[]
+        }
       }
+      /**
+       * 自定义「送进索引的 HTML」，见下方 `renderForSearch`。
+       * 签名对齐官方 `LocalSearchOptions['_render']`（MarkdownEnv 未从 vitepress 主入口导出）。
+       */
+      _render?: (
+        src: string,
+        env: { frontmatter?: Record<string, unknown> },
+        md: MarkdownRenderer
+      ) => string
     }
   }
 }
@@ -78,6 +96,51 @@ function loadPosts(): Promise<Post[]> {
     transform: transformPosts,
   })
   return postsLoader.load()
+}
+
+/**
+ * 送进本地搜索索引的 HTML（VitePress 的 `search.options._render`）。
+ *
+ * 为什么需要它：索引器切分的只是**渲染后的 Markdown 正文**，frontmatter 不在其中。
+ * 而本站文章页的标题由 PostLayout 从 `frontmatter.title` 渲染（正文不写 `# 标题`，
+ * 见 WRITING.md），于是标题与摘要根本不在索引里 —— 搜「科大讯飞一面」永远是 0 条。
+ * 首页 / 列表页 / 分类落地页同理：正文由组件渲染、Markdown 正文近乎为空，索引里没内容。
+ *
+ * 做法即官方文档 local search 一节的 Example 2：在正文前补一个一级标题（外加摘要段落），
+ * 标题与摘要随之可被搜到，并多出一条**页面级**结果（id 不带 #锚点，就是页面地址本身）。
+ *
+ * 两个实现细节：
+ * - 索引器只把「内部带 `<a href="#…">` 的 h1~h6」当作标题（VitePress 的 headingRegex），
+ *   且标题**之前**的正文会被整段丢弃，所以标题必须以「标题 + 锚点链接」的形式补。
+ *   锚点的 href 故意留空：本站的 h1 由布局组件渲染，正文里并不存在可跳转的锚点，
+ *   留空正好让这条记录的 id 干净地等于页面地址，而不是一个页面上并不存在的 #锚点。
+ * - 官方文档提醒：自己实现 `_render` 之后，`search: false` 的排除逻辑要自己写；
+ *   且 `env.frontmatter` 要等 `md.render` 之后才有值。
+ *
+ * 该函数以 `_` 开头，VitePress 不会（也无法）把它序列化进客户端，Node API 可自由使用。
+ */
+function renderForSearch(
+  src: string,
+  env: { frontmatter?: Record<string, unknown> },
+  md: MarkdownRenderer
+): string {
+  const html = md.render(src, env)
+
+  const frontmatter = env.frontmatter
+  if (frontmatter?.search === false) return ''
+
+  const title = typeof frontmatter?.title === 'string' ? frontmatter.title : ''
+  if (!title) return html
+
+  // frontmatter 是人工写的纯文本，转义后再拼接，避免标题里的 < > 破坏索引器的切分。
+  const heading = md.utils.escapeHtml(title)
+  const description =
+    typeof frontmatter?.description === 'string'
+      ? md.utils.escapeHtml(frontmatter.description)
+      : ''
+  const summary = description ? `<p>${description}</p>\n` : ''
+
+  return `<h1>${heading}<a class="header-anchor" href="#"></a></h1>\n${summary}${html}`
 }
 
 export default defineConfigWithTheme<BlogThemeConfig>({
@@ -256,15 +319,20 @@ export default defineConfigWithTheme<BlogThemeConfig>({
     ],
     lastUpdated: { text: '最后更新' },
     // VitePress 官方本地搜索（https://vitepress.dev/reference/default-theme-search）
-    // storeFields 增加 text，让自定义搜索 UI 能展示摘要（默认只存 title/titles）。
+    // - storeFields 增加 text，让自定义搜索 UI 能展示摘要（默认只存 title/titles）；
+    // - tokenize 换成中文优先的分词器，否则中文内容一个句子就是一个 token，搜不到
+    //   （原因与做法见 data/search-core.ts，客户端 LocalSearch.vue 必须传同一份）；
+    // - _render 把 frontmatter 的标题 / 摘要补进索引，否则标题根本搜不到（见该函数注释）。
     search: {
       provider: 'local',
       options: {
         miniSearch: {
           options: {
-            storeFields: ['title', 'titles', 'text'],
+            storeFields: [...SEARCH_STORE_FIELDS],
+            tokenize: tokenizeCJK,
           },
         },
+        _render: renderForSearch,
       },
     },
   },

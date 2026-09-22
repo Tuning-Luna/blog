@@ -3,6 +3,11 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 
 import { useData, useRouter } from 'vitepress'
 import MiniSearch from 'minisearch'
 import localSearchIndex from '@localSearchIndex'
+import {
+  SEARCH_FIELDS,
+  SEARCH_STORE_FIELDS,
+  tokenizeCJK,
+} from '../../data/search-core'
 import M3Icon from './M3Icon.vue'
 
 /**
@@ -38,9 +43,16 @@ async function ensureIndex() {
   try {
     const chunk = await localSearchIndex[localeIndex.value]?.()
     if (!chunk?.default) return
-    miniSearch.value = MiniSearch.loadJSON<SearchDoc>(JSON.parse(chunk.default), {
-      fields: ['title', 'titles', 'text'],
-      storeFields: ['title', 'titles', 'text'],
+    // ⚠️ `loadJSON` 的第一个参数是**JSON 字符串**，它内部会自己 JSON.parse
+    //（`loadJS(JSON.parse(json), options)`）。这里再 parse 一次就会把对象喂进去，
+    // 触发 `"[object Object]" is not valid JSON`，索引永远建不起来 —— 搜索框因此
+    // 完全没结果。官方默认主题的 VPLocalSearchBox 也是直接传 chunk.default。
+    miniSearch.value = MiniSearch.loadJSON<SearchDoc>(chunk.default, {
+      fields: [...SEARCH_FIELDS],
+      storeFields: [...SEARCH_STORE_FIELDS],
+      // ⚠️ 索引 JSON 里不含分词器，这里必须传入与构建期（config.ts）**同一份**，
+      // 否则查询串与索引里的 token 对不上，搜索会静默地永远没有结果。
+      tokenize: tokenizeCJK,
       searchOptions: {
         fuzzy: 0.2,
         prefix: true,
