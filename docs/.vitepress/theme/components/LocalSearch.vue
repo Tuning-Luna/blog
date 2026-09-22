@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
 import { useData, useRouter } from 'vitepress'
-import MiniSearch from 'minisearch'
+// 只做类型引用：MiniSearch 的**运行时**改成 ensureIndex() 里的动态 import。
+// 它是本组件唯一的重量级依赖（约 34KB，含 SearchableMap 与编辑距离自动机），
+// 而本组件被 SiteHeader 静态 import、SiteHeader 又在每个布局里 —— 静态引入会把
+// 这 34KB 塞进「每页都加载」的 theme chunk（实测占该 chunk 的 83%，而主题自身
+// 代码只有 7KB）。搜索面板本来就是点开才用，让它跟着按需加载才对，
+// 顺带也不会再拖慢首屏。`import type` 在编译后会被完全擦除，不进产物。
+import type MiniSearch from 'minisearch'
 import localSearchIndex from '@localSearchIndex'
 import {
   SEARCH_FIELDS,
@@ -43,11 +49,13 @@ async function ensureIndex() {
   try {
     const chunk = await localSearchIndex[localeIndex.value]?.()
     if (!chunk?.default) return
+    // 与索引一起按需拉取（见文件头部关于为什么要动态 import 的说明）。
+    const { default: MiniSearchCtor } = await import('minisearch')
     // ⚠️ `loadJSON` 的第一个参数是**JSON 字符串**，它内部会自己 JSON.parse
     //（`loadJS(JSON.parse(json), options)`）。这里再 parse 一次就会把对象喂进去，
     // 触发 `"[object Object]" is not valid JSON`，索引永远建不起来 —— 搜索框因此
     // 完全没结果。官方默认主题的 VPLocalSearchBox 也是直接传 chunk.default。
-    miniSearch.value = MiniSearch.loadJSON<SearchDoc>(chunk.default, {
+    miniSearch.value = MiniSearchCtor.loadJSON<SearchDoc>(chunk.default, {
       fields: [...SEARCH_FIELDS],
       storeFields: [...SEARCH_STORE_FIELDS],
       // ⚠️ 索引 JSON 里不含分词器，这里必须传入与构建期（config.ts）**同一份**，
