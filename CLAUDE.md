@@ -43,6 +43,7 @@ TuningLuna 的个人博客。基于 **VitePress** 的纯静态站点：本地写
 │       ├── data/posts.data.ts # ★ 客户端数据源（createContentLoader 薄壳）
 │       ├── data/feed.ts       # ★ RSS 2.0 生成（buildEnd 调用）
 │       ├── data/categories.ts # ★ 分类注册表（两级：展示名 / 展示顺序）
+│       ├── data/search-core.ts # ★ 搜索分词核心（构建期与客户端共用的中文分词 + 字段名）
 │       ├── data/profile.ts        # 人工维护的个人资料（联系方式、头像等）
 │       └── theme/             # ★ 自定义主题
 │           ├── index.ts       # 导出 Layout + 导入样式（不做全局组件注册）
@@ -123,7 +124,20 @@ npm run typecheck  # vue-tsc 类型检查
 
 - **本地搜索**：`themeConfig.search.provider: 'local'`。自定义主题用 `LocalSearch.vue` 消费
   `@localSearchIndex` 虚拟模块 + `minisearch`（直接依赖）查询；`/` 打开、Esc 关闭、方向键导航。
-  `storeFields` 扩展了 `text` 以支持摘要（默认只存 title/titles）。
+  构建期与客户端最容易走散的三处（都会**静默**失效：不报错、只是搜不到）：
+  1. **分词器** `data/search-core.ts` 的 `tokenizeCJK` —— 索引 JSON 里不含分词器，`config.ts`
+     与 `LocalSearch.vue` 必须各传**同一份**。MiniSearch 默认只按空白/标点切，中文整句会变成
+     一个 token，「回滚」这类词永远搜不到，故汉字走二元切分；单字查询靠 `prefix: true` 前缀展开。
+  2. **`storeFields`**（`SEARCH_STORE_FIELDS`，含 `text`）—— 两处同样要一致，决定结果里能否拿到摘要。
+  3. **`MiniSearch.loadJSON(json, …)` 的第一个参数是 JSON 字符串** —— 它在内部自己
+     `JSON.parse`，外面再 parse 一次就会抛 `"[object Object]" is not valid JSON`，
+     索引建不起来 → 搜索框完全没结果（官方默认主题直接传 `chunk.default`，照抄即可）。
+  另外 `config.ts` 的 `_render`（`renderForSearch`）把 frontmatter 的 title/description 补进索引：
+  索引器只看**渲染后的 Markdown 正文**，而本站文章标题由 `PostLayout` 渲染、正文不写 `# 标题`，
+  不补的话标题根本搜不到（首页 / 列表页 / 分类落地页同理）。
+  **改完搜索必须实测**：`npm run build` 后在浏览器里搜中文标题与正文；只跑 typecheck 不够 ——
+  上面三类问题一个都不会报错。`npm run preview` 的静态服务在启动时缓存文件列表，
+  **重新构建后要重启 preview**，否则浏览器拿到的是 404/旧 chunk。
 - **sitemap**：`sitemap: { hostname: SITE.url }`，构建生成 `sitemap.xml`（官方能力）。
 - **canonical / Open Graph**：**按页**生成，在 `config.ts` 的 `transformPageData` 里写进 `frontmatter.head`。
   ⚠️ 绝不能把 canonical 放进全局 `head`：VitePress 的 head 合并规则只给 `meta`（按第一个非 `content` 属性）
